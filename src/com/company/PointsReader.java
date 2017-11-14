@@ -48,4 +48,8 @@ public class PointsReader {
             System.out.println(String.format("index:%5d  x:%5d  y:%5d   profit:%5d", point.getIndex(), point.getX(), point.getY(), point.getProfit()));
         });
     }
+
+    public Map<Integer, Point> getPoints() {
+        return points;
+    }
 }
