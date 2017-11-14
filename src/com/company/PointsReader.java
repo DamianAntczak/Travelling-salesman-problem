@@ -35,10 +35,8 @@ public class PointsReader {
             while ((line = br.readLine()) != null) {
                 if(line.matches("\\d* \\d* \\d*")){
                     String[] args = line.split(" ");
-                    Arrays.stream(args).forEach(s -> System.out.println(s));
                     Point point = points.get(Integer.parseInt(args[0]));
-                    int profit = Integer.parseInt(args[1]) * 5;
-                    point.setProfit(profit);
+                    point.setProfit(Integer.parseInt(args[1]));
                     points.put(point.getIndex(), point);
                 }
             }
