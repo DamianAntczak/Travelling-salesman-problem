@@ -8,6 +8,8 @@ public class Main {
 	    PointsReader pointsReader = new PointsReader();
         try {
             pointsReader.loadKorA100();
+            pointsReader.loadKorB100();
+            pointsReader.printPoints();
         } catch (IOException e) {
             e.printStackTrace();
         }

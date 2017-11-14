@@ -1,17 +1,14 @@
 package com.company;
 
 public class Point {
+    private int index;
     private int x;
     private int y;
     private int profit;
 
-    public Point(int x, int y, int profit) {
-        this.x = x;
-        this.y = y;
-        this.profit = profit * 5;
-    }
 
-    public Point(int x, int y) {
+    public Point(int index, int x, int y) {
+        this.index = index;
         this.x = x;
         this.y = y;
     }
@@ -38,5 +35,13 @@ public class Point {
 
     public void setProfit(int profit) {
         this.profit = profit * 5;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }
