@@ -44,4 +44,10 @@ public class Point {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    public double getDistance(Point point){
+        double deltaX = point.getX() - this.x;
+        double deltaY = point.getY() - this.y;
+        return Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+    }
 }

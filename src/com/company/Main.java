@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class Main {
 
@@ -10,6 +11,12 @@ public class Main {
             pointsReader.loadKorA100();
             pointsReader.loadKorB100();
             pointsReader.printPoints();
+            System.out.println();
+
+            Map<Integer, Point> points = pointsReader.getPoints();
+
+            GreedyCycle greedyCycle = new GreedyCycle();
+            greedyCycle.execute(points.get(1), points);
         } catch (IOException e) {
             e.printStackTrace();
         }
