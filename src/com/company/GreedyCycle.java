@@ -73,4 +73,8 @@ public class GreedyCycle implements Algorithm {
             points = expandCycle(points);
         }
     }
+
+    public LinkedList<Point> getCycle() {
+        return cycle;
+    }
 }
