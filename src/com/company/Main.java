@@ -48,9 +48,10 @@ public class Main {
             GreedyCycle greedyCycle = new GreedyCycle();
             greedyCycle.execute(points.get(1), points);
 
-
-
-
+            NearestNeighbor nearestNeighbor = new NearestNeighbor();
+            System.out.println("Nearest: ");
+            nearestNeighbor.execute(points.get(1), points);
+            System.out.println(nearestNeighbor.getTempPoints());
 
 
         } catch (IOException e) {

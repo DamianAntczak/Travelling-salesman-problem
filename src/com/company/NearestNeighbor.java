@@ -1,37 +1,69 @@
 package com.company;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class NearestNeighbor {
-    private static Map<Integer, Point> tempPoints;
-    public static void execute(Integer startPointIndex, Map<Integer, Point> allPoints) {
-        Point latestPoint = allPoints.get(startPointIndex);
-        tempPoints.put(0, latestPoint);
-        allPoints.remove(startPointIndex);
+public class NearestNeighbor implements Algorithm {
+    private Map<Integer, Point> tempPoints;
+    private double endProfit;
 
-        allPoints.forEach((integer, point) -> {
-            NearestNeighbor.getDistance(latestPoint, point);
-        });
+    public Map<Integer, Point> getTempPoints() {
+        return tempPoints;
     }
 
-    private static Integer findNearest(Point point, Map<Integer, Point> allPoints) {
-        Integer min = 10000;
-        allPoints.forEach((integer, secondPoint) -> {
-            if(NearestNeighbor.getDistance(point, secondPoint) < min) {
-                min = NearestNeighbor.getDistance(point, secondPoint);
+    public double getEndProfit() {
+        return endProfit;
+    }
+
+    public NearestNeighbor() {
+        this.tempPoints = new HashMap<>(100);
+        this.endProfit = 0.0;
+    }
+
+    @Override
+    public void execute(Point startPoint, Map<Integer, Point> allPoints) {
+        Point latestPoint = startPoint;
+        Point nearestPoint;
+        Integer index = 0;
+        this.tempPoints.put(index, latestPoint);
+        allPoints.remove(startPoint.getIndex());
+
+        while (!allPoints.isEmpty()) {
+            index++;
+            nearestPoint = this.findNearest(latestPoint, allPoints);
+            this.tempPoints.put(index, nearestPoint);
+            allPoints.remove(nearestPoint.getIndex());
+            this.countProfit(nearestPoint.getProfit(), this.getDistance(latestPoint, nearestPoint));
+            latestPoint = nearestPoint;
+        }
+
+        index++;
+        this.tempPoints.put(index, startPoint);
+        this.countProfit(startPoint.getProfit(), this.getDistance(latestPoint, startPoint));
+    }
+
+    private Point findNearest(Point point, Map<Integer, Point> allPoints) {
+        Point nearestPoint = new Point(0, 0, 0);
+        double min = 1000000;
+
+        for(Map.Entry<Integer, Point> secondPoint : allPoints.entrySet())
+        {
+            if(this.getDistance(point, secondPoint.getValue()) < min) {
+                min = this.getDistance(point, secondPoint.getValue());
+                nearestPoint = point;
             }
-        });
+        }
 
-        return min;
+        return nearestPoint;
     }
 
-    private static Integer countProfit(Integer profit, Integer wayLoss) {
+    private void countProfit(Integer profit, double wayLoss) {
         Integer LOSS_CONST = 5;
 
-        return profit - wayLoss * LOSS_CONST;
+        this.endProfit += profit - wayLoss * LOSS_CONST;
     }
 
-    private static double getDistance(Point pointOne, Point pointTwo) {
-        return Math.sqrt((pointOne.getX() - pointTwo.getX()) *  (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) *  (pointOne.getY() - pointTwo.getY()));
+    private double getDistance(Point pointOne, Point pointTwo) {
+        return Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) *  (pointOne.getY() - pointTwo.getY()));
     }
 }
