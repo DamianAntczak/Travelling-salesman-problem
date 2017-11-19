@@ -6,26 +6,28 @@ import java.util.*;
 
 public class GreedyCycle implements Algorithm {
 
-    private LinkedList<Point> cycle;
+    private ArrayList<Point> cycle;
     private Point startPoint;
+    private double profit;
 
     public GreedyCycle() {
-        this.cycle = new LinkedList<>();
+        this.cycle = new ArrayList<>();
+        this.profit = 0.0;
     }
 
     @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
+        Map<Integer, Point> tempPoints = new HashMap<>(allPoints);
+
         this.startPoint = startPoint;
-        allPoints.remove(startPoint.getIndex());
+        tempPoints.remove(startPoint.getIndex());
         cycle.add(startPoint);
 
-        findPath(allPoints);
-
-        cycle.forEach(point -> System.out.println(point.getIndex()));
+        findPath(tempPoints);
     }
 
-    private Pair<Point, Double> findNearestPoint(Point forPoint,Map<Integer, Point> points) {
-        double distance = 0.0;
+    private Pair<Point, Double> findNearestPoint(Point forPoint, Map<Integer, Point> points) {
+        double actualProfit = 0.0;
         Point currentPoint = null;
 
         Iterator it = points.entrySet().iterator();
@@ -33,12 +35,12 @@ public class GreedyCycle implements Algorithm {
             Map.Entry pair = (Map.Entry) it.next();
             Point point = (Point) pair.getValue();
             Integer key = (Integer) pair.getKey();
-            double distanceToStart = forPoint.getDistance(point);
+            double profitToStart = countProfit(point.getProfit(), forPoint.getDistance(point));
 
 //            System.out.println(key + " = " + distanceToStart);
 
-            if (distance == 0.0 || distance > distanceToStart) {
-                distance = distanceToStart;
+            if (actualProfit == 0.0 || profitToStart > actualProfit ) {
+                actualProfit = profitToStart;
                 currentPoint = point;
             }
         }
@@ -46,35 +48,54 @@ public class GreedyCycle implements Algorithm {
 //        System.out.println(distance);
 //        System.out.println(currentPoint.getIndex());
 
-        return new Pair<>(currentPoint, distance);
+        return new Pair<>(currentPoint, actualProfit);
     }
 
     private Map<Integer, Point> expandCycle(Map<Integer, Point> points) {
         Point currentPoint = null;
         Point precursor = null;
-        double distance = 0;
+        double actualProfit = 0;
         for (Point point : cycle) {
             Pair<Point, Double> nearestPoint = findNearestPoint(point, points);
-            if (distance == 0 || distance > nearestPoint.getValue()) {
-                distance = nearestPoint.getValue();
+            if (nearestPoint.getValue() > actualProfit) {
+                actualProfit = nearestPoint.getValue();
                 currentPoint = nearestPoint.getKey();
                 precursor = point;
             }
         }
 
+        if (actualProfit > 0) {
+            this.profit += actualProfit;
+            cycle.add(cycle.indexOf(precursor), currentPoint);
+            points.remove(currentPoint.getIndex());
+            return points;
+        } else {
+            return null;
+        }
 
-        cycle.add(cycle.indexOf(precursor),currentPoint);
-        points.remove(currentPoint.getIndex());
-        return points;
     }
 
-    private void  findPath(Map<Integer, Point> points){
-        while (points.size() > 0){
-            points = expandCycle(points);
+    private void findPath(Map<Integer, Point> points) {
+        while (points.size() > 0) {
+            Map<Integer, Point> integerPointMap = expandCycle(points);
+            if (integerPointMap != null)
+                points = integerPointMap;
+            else
+                break;
         }
     }
 
-    public LinkedList<Point> getCycle() {
+    public ArrayList<Point> getResultList() {
         return cycle;
+    }
+
+    private double countProfit(Integer profit, double wayLoss) {
+        Integer LOSS_CONST = 5;
+
+        return profit - wayLoss * LOSS_CONST;
+    }
+
+    public double getProfit() {
+        return profit;
     }
 }

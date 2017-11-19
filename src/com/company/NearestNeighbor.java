@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class NearestNeighbor implements Algorithm {
-    private LinkedList<Point> tempPoints;
+    private ArrayList<Point> tempPoints;
     private double endProfit;
     private Map<Integer, Point> allPoints;
 
-    public LinkedList<Point> getPoints() {
+    public ArrayList<Point> getPoints() {
         return tempPoints;
     }
 
@@ -18,7 +18,7 @@ public class NearestNeighbor implements Algorithm {
     }
 
     public NearestNeighbor() {
-        this.tempPoints = new LinkedList<>();
+        this.tempPoints = new ArrayList<>();
         this.endProfit = 0.0;
     }
 
@@ -70,5 +70,15 @@ public class NearestNeighbor implements Algorithm {
 
     private double getDistance(Point pointOne, Point pointTwo) {
         return Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) *  (pointOne.getY() - pointTwo.getY()));
+    }
+
+    @Override
+    public ArrayList<Point> getResultList() {
+        return this.tempPoints;
+    }
+
+    @Override
+    public double getProfit() {
+        return 0;
     }
 }

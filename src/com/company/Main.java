@@ -5,15 +5,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
-	    PointsReader pointsReader = new PointsReader();
+        PointsReader pointsReader = new PointsReader();
         try {
             pointsReader.loadKorA100();
             pointsReader.loadKorB100();
@@ -22,57 +22,104 @@ public class Main {
 
             Map<Integer, Point> points = pointsReader.getPoints();
 
-            int maxX = Collections.max(points.entrySet(), Comparator.comparingInt(entry -> entry.getValue().getX())).getValue().getX();
-            int maxY = Collections.max(points.entrySet(), Comparator.comparingInt(entry -> entry.getValue().getY())).getValue().getY();
-            BufferedImage img = new BufferedImage(maxX + 50, maxY + 50, BufferedImage.TYPE_INT_RGB);
 
-            int pixelWhite[] = {255,255,255};
-            for (int i = 0 ; i < img.getWidth(); i++){
-                for (int j = 0 ; j < img.getHeight(); j++){
-                    img.getRaster().setPixel(i,j,pixelWhite);
+
+            TreeMap<Double, ArrayList<Point>> results = getAllResults(points);
+
+            final int[] i = {0};
+            results.forEach((aDouble, points1) -> {
+                if(i[0] < 6) {
+                    System.out.println(aDouble);
+                    try {
+                        saveToFile(points, points1, ".\\greedyCycle\\points" + String.valueOf(aDouble).replace(".", "_"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-
-            Graphics2D graphics = img.createGraphics();
-            graphics.setStroke(new BasicStroke(5));
-            graphics.setFont(new Font("Tahoma", Font.PLAIN, 50));
-
-            points.forEach((integer, point) -> {
-                int pixel[] = {0,0,0};
-                for (int size = 1 ; size < 12; size++) {
-                    graphics.setColor(Color.BLUE);
-                    graphics.drawOval(point.getX(), point.getY(), 10, 10);
-                    graphics.setColor(Color.RED);
-                    graphics.setStroke(new BasicStroke(25));
-                    graphics.drawString(String.valueOf(point.getIndex()), point.getX(),point.getY());
-                }
-                img.getRaster().setPixel(point.getX(), point.getY(), pixel);
+                i[0]++;
             });
-            GreedyCycle greedyCycle = new GreedyCycle();
-            greedyCycle.execute(points.get(1),points);
-            LinkedList<Point> path = greedyCycle.getCycle();
-
-            graphics.setStroke(new BasicStroke(3));
-            graphics.setColor(Color.black);
-            for (int i = 0; i < path.size() - 2; i++){
-                Point point1 = path.get(i);
-                Point point2 = path.get(i + 1);
-                graphics.drawLine(point1.getX(), point1.getY(), point2.getX(), point2.getY());
-            }
-            graphics.drawLine(path.get(0).getX(),path.get(0).getY(), path.get(path.size()-1).getX(), path.get(path.size()-1).getY());
-            graphics.dispose();
 
 
 
-            ImageIO.write(img, "BMP", new File("points.bmp"));
+            System.out.println(points.size());
 
-            NearestNeighbor nearestNeighbor = new NearestNeighbor();
-            System.out.println("Nearest: ");
-            nearestNeighbor.execute(points.get(1), points);
-            System.out.println(nearestNeighbor.getPoints());
-            System.out.println(nearestNeighbor.getEndProfit());
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void saveToFile(Map<Integer, Point> points, ArrayList<Point> path, String fileName) throws IOException {
+        int maxX = getMaxX(points);
+        int maxY = getMaxY(points);
+        BufferedImage img = new BufferedImage(maxX + 150, maxY + 150, BufferedImage.TYPE_INT_RGB);
+
+        fillBackground(img);
+
+        Graphics2D graphics = img.createGraphics();
+        graphics.drawRect(0, 0, img.getWidth(), img.getHeight());
+        graphics.setStroke(new BasicStroke(5));
+        graphics.setFont(new Font("Tahoma", Font.PLAIN, 50));
+
+        drawPoints(points, graphics);
+        drawLines(graphics, path);
+        graphics.dispose();
+
+        ImageIO.write(img, "PNG", new File(fileName+".png"));
+    }
+
+    private static TreeMap<Double, ArrayList<Point>> getAllResults(Map<Integer, Point> points) {
+        TreeMap<Double, ArrayList<Point>> results = new TreeMap<>(Collections.reverseOrder());
+        for (int i = 1; i <= 100; i++) {
+            Algorithm greedyCycle = new GreedyCycle();
+            greedyCycle.execute(points.get(i), points);
+            ArrayList<Point> path = greedyCycle.getResultList();
+            results.put(greedyCycle.getProfit(), path);
+        }
+        return results;
+    }
+
+    private static int getMaxY(Map<Integer, Point> points) {
+        return Collections.max(points.entrySet(), Comparator.comparingInt(entry -> entry.getValue().getY())).getValue().getY();
+    }
+
+    private static int getMaxX(Map<Integer, Point> points) {
+        return Collections.max(points.entrySet(), Comparator.comparingInt(entry -> entry.getValue().getX())).getValue().getX();
+    }
+
+    private static void drawLines(Graphics2D graphics, ArrayList<Point> path) {
+        graphics.setStroke(new BasicStroke(25));
+        graphics.setColor(Color.BLUE);
+        graphics.drawOval(path.get(0).getX(), path.get(0).getY(), 10, 10);
+        graphics.setStroke(new BasicStroke(3));
+        graphics.setColor(Color.black);
+        for (int i = 0; i < path.size() - 1; i++) {
+            Point point1 = path.get(i);
+            Point point2 = path.get(i + 1);
+            graphics.drawLine(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+
+        }
+        graphics.drawLine(path.get(0).getX(), path.get(0).getY(), path.get(path.size() - 1).getX(), path.get(path.size() - 1).getY());
+    }
+
+    private static void drawPoints(Map<Integer, Point> points, Graphics2D graphics) {
+        graphics.setStroke(new BasicStroke(25));
+        points.forEach((integer, point) -> {
+            graphics.setColor(new Color(135, 135, 135));
+            graphics.drawOval(point.getX(), point.getY(), 10, 10);
+            graphics.setColor(new Color(137, 0, 0));
+            graphics.drawString(String.valueOf(point.getIndex()), point.getX(), point.getY() - 20);
+            graphics.setColor(new Color(18, 132, 1));
+            graphics.drawString(String.valueOf(point.getProfit()), point.getX(), point.getY() + 60);
+        });
+    }
+
+    private static void fillBackground(BufferedImage img) {
+        int pixelWhite[] = {255, 255, 255};
+        for (int i = 0; i < img.getWidth(); i++) {
+            for (int j = 0; j < img.getHeight(); j++) {
+                img.getRaster().setPixel(i, j, pixelWhite);
+            }
         }
     }
 
