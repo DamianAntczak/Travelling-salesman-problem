@@ -63,9 +63,14 @@ public class Main {
             graphics.dispose();
 
 
+
             ImageIO.write(img, "BMP", new File("points.bmp"));
 
-
+            NearestNeighbor nearestNeighbor = new NearestNeighbor();
+            System.out.println("Nearest: ");
+            nearestNeighbor.execute(points.get(1), points);
+            System.out.println(nearestNeighbor.getPoints());
+            System.out.println(nearestNeighbor.getEndProfit());
         } catch (IOException e) {
             e.printStackTrace();
         }

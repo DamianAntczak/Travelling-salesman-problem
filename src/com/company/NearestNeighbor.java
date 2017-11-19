@@ -1,13 +1,15 @@
 package com.company;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class NearestNeighbor implements Algorithm {
-    private Map<Integer, Point> tempPoints;
+    private LinkedList<Point> tempPoints;
     private double endProfit;
+    private Map<Integer, Point> allPoints;
 
-    public Map<Integer, Point> getTempPoints() {
+    public LinkedList<Point> getPoints() {
         return tempPoints;
     }
 
@@ -16,29 +18,32 @@ public class NearestNeighbor implements Algorithm {
     }
 
     public NearestNeighbor() {
-        this.tempPoints = new HashMap<>(100);
+        this.tempPoints = new LinkedList<>();
         this.endProfit = 0.0;
     }
 
     @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
+        this.allPoints = allPoints;
         Point latestPoint = startPoint;
         Point nearestPoint;
         Integer index = 0;
-        this.tempPoints.put(index, latestPoint);
-        allPoints.remove(startPoint.getIndex());
+        this.tempPoints.add(index, latestPoint);
+        System.out.println(this.allPoints.size());
+        this.allPoints.remove(startPoint.getIndex());
 
-        while (!allPoints.isEmpty()) {
+        while (!this.allPoints.isEmpty()) {
             index++;
-            nearestPoint = this.findNearest(latestPoint, allPoints);
-            this.tempPoints.put(index, nearestPoint);
-            allPoints.remove(nearestPoint.getIndex());
+            System.out.println(this.allPoints.size());
+            nearestPoint = this.findNearest(latestPoint, this.allPoints);
+            this.tempPoints.add(index, nearestPoint);
+            this.allPoints.remove(nearestPoint.getIndex());
             this.countProfit(nearestPoint.getProfit(), this.getDistance(latestPoint, nearestPoint));
             latestPoint = nearestPoint;
         }
 
         index++;
-        this.tempPoints.put(index, startPoint);
+        this.tempPoints.add(index, startPoint);
         this.countProfit(startPoint.getProfit(), this.getDistance(latestPoint, startPoint));
     }
 
