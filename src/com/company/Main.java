@@ -6,9 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -31,11 +28,13 @@ public class Main {
                 System.out.println(aDouble);
                 if(i[0] < 6) {
                     try {
-//                        for (int x=0; x<algorithm.getResultList().size(); x++) {
-//                            System.out.print(algorithm.getResultList().get(x).getIndex());
-//                            System.out.print(" -> ");
-//                        }
-                        saveToFile(points, algorithm.getResultList(), "./greedyCycle/points" + String.valueOf(aDouble).replace(".", "_"), algorithm.getStartPoint());
+                        String className = algorithm.getClass().getSimpleName();
+                        File dir = new File("."+File.separator+ className);
+                        if(!dir.exists()){
+                            dir.mkdir();
+                        }
+                        String fileName = dir.getCanonicalPath() + File.separator + "points" + String.valueOf(aDouble).replace(".", "_");
+                        saveToFile(points, algorithm.getResultList(), fileName, algorithm.getStartPoint());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -83,18 +82,10 @@ public class Main {
     private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
-            Algorithm greedyCycle = new GreedyCycle();
-            greedyCycle.execute(points.get(i), points);
-            ArrayList<Point> path = greedyCycle.getResultList();
-            results.put(greedyCycle.getProfit(), greedyCycle);
+            Algorithm nearestNeighbor = new Regret();
+            nearestNeighbor.execute(points.get(i), points);
+            results.put(nearestNeighbor.getProfit(), nearestNeighbor);
         }
-
-//        for (int i = 1; i <= 100; i++) {
-//            Algorithm nearestNeighbor = new NearestNeighbor();
-//            nearestNeighbor.execute(points.get(i), points);
-//            results.put(nearestNeighbor.getProfit(), nearestNeighbor);
-//        }
-
         return results;
     }
 
