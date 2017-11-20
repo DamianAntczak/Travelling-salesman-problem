@@ -24,14 +24,14 @@ public class Main {
 
 
 
-            TreeMap<Double, ArrayList<Point>> results = getAllResults(points);
+            TreeMap<Double, Algorithm> results = getAllResults(points);
 
             final int[] i = {0};
-            results.forEach((aDouble, points1) -> {
+            results.forEach((aDouble, algorithm) -> {
+                System.out.println(aDouble);
                 if(i[0] < 6) {
-                    System.out.println(aDouble);
                     try {
-                        saveToFile(points, points1, ".\\greedyCycle\\points" + String.valueOf(aDouble).replace(".", "_"));
+                        saveToFile(points, algorithm.getResultList(), ".\\greedyCycle\\points" + String.valueOf(aDouble).replace(".", "_"), algorithm.getStartPoint());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -49,7 +49,7 @@ public class Main {
         }
     }
 
-    private static void saveToFile(Map<Integer, Point> points, ArrayList<Point> path, String fileName) throws IOException {
+    private static void saveToFile(Map<Integer, Point> points, ArrayList<Point> path, String fileName, Point startPoint) throws IOException {
         int maxX = getMaxX(points);
         int maxY = getMaxY(points);
         BufferedImage img = new BufferedImage(maxX + 150, maxY + 150, BufferedImage.TYPE_INT_RGB);
@@ -63,18 +63,26 @@ public class Main {
 
         drawPoints(points, graphics);
         drawLines(graphics, path);
+        drawStartPoint(startPoint, graphics);
         graphics.dispose();
 
         ImageIO.write(img, "PNG", new File(fileName+".png"));
     }
 
-    private static TreeMap<Double, ArrayList<Point>> getAllResults(Map<Integer, Point> points) {
-        TreeMap<Double, ArrayList<Point>> results = new TreeMap<>(Collections.reverseOrder());
+    private static void drawStartPoint(Point startPoint, Graphics2D graphics) {
+        graphics.setStroke(new BasicStroke(30));
+        graphics.setColor(Color.BLUE);
+        graphics.drawOval(startPoint.getX(), startPoint.getY(), 10, 10);
+
+    }
+
+    private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
+        TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
             Algorithm greedyCycle = new GreedyCycle();
             greedyCycle.execute(points.get(i), points);
             ArrayList<Point> path = greedyCycle.getResultList();
-            results.put(greedyCycle.getProfit(), path);
+            results.put(greedyCycle.getProfit(), greedyCycle);
         }
         return results;
     }
@@ -89,8 +97,6 @@ public class Main {
 
     private static void drawLines(Graphics2D graphics, ArrayList<Point> path) {
         graphics.setStroke(new BasicStroke(25));
-        graphics.setColor(Color.BLUE);
-        graphics.drawOval(path.get(0).getX(), path.get(0).getY(), 10, 10);
         graphics.setStroke(new BasicStroke(3));
         graphics.setColor(Color.black);
         for (int i = 0; i < path.size() - 1; i++) {

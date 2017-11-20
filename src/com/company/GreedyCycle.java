@@ -20,9 +20,8 @@ public class GreedyCycle implements Algorithm {
         Map<Integer, Point> tempPoints = new HashMap<>(allPoints);
 
         this.startPoint = startPoint;
-        tempPoints.remove(startPoint.getIndex());
         cycle.add(startPoint);
-
+        tempPoints.remove(startPoint.getIndex());
         findPath(tempPoints);
     }
 
@@ -78,9 +77,7 @@ public class GreedyCycle implements Algorithm {
     private void findPath(Map<Integer, Point> points) {
         while (points.size() > 0) {
             Map<Integer, Point> integerPointMap = expandCycle(points);
-            if (integerPointMap != null)
-                points = integerPointMap;
-            else
+            if (integerPointMap == null)
                 break;
         }
     }
@@ -97,5 +94,10 @@ public class GreedyCycle implements Algorithm {
 
     public double getProfit() {
         return profit;
+    }
+
+    @Override
+    public Point getStartPoint() {
+        return startPoint;
     }
 }

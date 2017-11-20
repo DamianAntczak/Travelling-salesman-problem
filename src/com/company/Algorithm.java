@@ -10,4 +10,6 @@ public interface Algorithm {
     public ArrayList<Point> getResultList();
 
     double getProfit();
+
+    Point getStartPoint();
 }

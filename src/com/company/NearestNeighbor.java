@@ -81,4 +81,9 @@ public class NearestNeighbor implements Algorithm {
     public double getProfit() {
         return 0;
     }
+
+    @Override
+    public Point getStartPoint() {
+        return null;
+    }
 }
