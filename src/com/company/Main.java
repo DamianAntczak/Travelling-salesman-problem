@@ -19,20 +19,26 @@ public class Main {
 
             Map<Integer, Point> points = pointsReader.getPoints();
 
-
-
             TreeMap<Double, Algorithm> results = getAllResults(points);
 
             final int[] i = {0};
             results.forEach((aDouble, algorithm) -> {
                 System.out.println(aDouble);
-                if(i[0] < 6) {
+                if (i[0] < 6) {
                     try {
                         String className = algorithm.getClass().getSimpleName();
-                        File dir = new File("."+File.separator+ className);
-                        if(!dir.exists()){
+                        File dir = new File("." + File.separator + className);
+                        if (!dir.exists()) {
                             dir.mkdir();
                         }
+
+//                        if(i[0] == 0) {
+//                            for (int x = 0; x < algorithm.getResultList().size(); x++) {
+//                                System.out.print(algorithm.getResultList().get(x).getIndex());
+//                                System.out.print(" -> ");
+//                            }
+//                        }
+
                         String fileName = dir.getCanonicalPath() + File.separator + "points" + String.valueOf(aDouble).replace(".", "_");
                         saveToFile(points, algorithm.getResultList(), fileName, algorithm.getStartPoint());
                     } catch (IOException e) {
@@ -41,7 +47,6 @@ public class Main {
                 }
                 i[0]++;
             });
-
 
 
             System.out.println(points.size());
@@ -69,7 +74,7 @@ public class Main {
         drawStartPoint(startPoint, graphics);
         graphics.dispose();
 
-        ImageIO.write(img, "PNG", new File(fileName+".png"));
+        ImageIO.write(img, "PNG", new File(fileName + ".png"));
     }
 
     private static void drawStartPoint(Point startPoint, Graphics2D graphics) {
