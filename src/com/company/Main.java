@@ -31,6 +31,10 @@ public class Main {
                 System.out.println(aDouble);
                 if(i[0] < 6) {
                     try {
+//                        for (int x=0; x<algorithm.getResultList().size(); x++) {
+//                            System.out.print(algorithm.getResultList().get(x).getIndex());
+//                            System.out.print(" -> ");
+//                        }
                         saveToFile(points, algorithm.getResultList(), "./greedyCycle/points" + String.valueOf(aDouble).replace(".", "_"), algorithm.getStartPoint());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -78,18 +82,18 @@ public class Main {
 
     private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
-//        for (int i = 1; i <= 100; i++) {
-//            Algorithm greedyCycle = new GreedyCycle();
-//            greedyCycle.execute(points.get(i), points);
-//            ArrayList<Point> path = greedyCycle.getResultList();
-//            results.put(greedyCycle.getProfit(), greedyCycle);
-//        }
-
         for (int i = 1; i <= 100; i++) {
-            Algorithm nearestNeighbor = new NearestNeighbor();
-            nearestNeighbor.execute(points.get(i), points);
-            results.put(nearestNeighbor.getProfit(), nearestNeighbor);
+            Algorithm greedyCycle = new GreedyCycle();
+            greedyCycle.execute(points.get(i), points);
+            ArrayList<Point> path = greedyCycle.getResultList();
+            results.put(greedyCycle.getProfit(), greedyCycle);
         }
+
+//        for (int i = 1; i <= 100; i++) {
+//            Algorithm nearestNeighbor = new NearestNeighbor();
+//            nearestNeighbor.execute(points.get(i), points);
+//            results.put(nearestNeighbor.getProfit(), nearestNeighbor);
+//        }
 
         return results;
     }
