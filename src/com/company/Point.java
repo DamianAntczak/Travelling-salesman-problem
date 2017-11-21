@@ -46,8 +46,6 @@ public class Point {
     }
 
     public double getDistance(Point point){
-        double deltaX = point.getX() - this.x;
-        double deltaY = point.getY() - this.y;
-        return Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+        return Math.sqrt((this.getX() - point.getX()) * (this.getX() - point.getX()) + (this.getY() - point.getY()) *  (this.getY() - point.getY()));
     }
 }

@@ -87,7 +87,7 @@ public class Main {
     private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
-            Algorithm nearestNeighbor = new Regret();
+            Algorithm nearestNeighbor = new RandomPath();
             nearestNeighbor.execute(points.get(i), points);
             results.put(nearestNeighbor.getProfit(), nearestNeighbor);
         }
