@@ -34,7 +34,7 @@ public class Point {
     }
 
     public void setProfit(int profit) {
-        this.profit = profit * 5;
+        this.profit = profit;
     }
 
     public int getIndex() {

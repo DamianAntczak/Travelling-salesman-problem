@@ -8,6 +8,7 @@ public class Regret implements Algorithm {
     private Point startPoint;
     private ArrayList<Point> path;
     private Double profit;
+    private ArrayList<Point> restList;
 
     public Regret(){
         this.profit = 0.0;
@@ -111,5 +112,25 @@ public class Regret implements Algorithm {
         Integer LOSS_CONST = 5;
 
         return profit - wayLoss * LOSS_CONST;
+    }
+
+    @Override
+    public ArrayList<Point> getRestList() {
+        return this.restList;
+    }
+
+    @Override
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
+    @Override
+    public void removePointFromCycle(int index){
+        this.path.remove(index);
+    }
+
+    @Override
+    public void addPointToCycle(int index, Point point) {
+        this.path.add(index, point);
     }
 }

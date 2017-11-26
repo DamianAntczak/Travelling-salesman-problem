@@ -9,7 +9,15 @@ public interface Algorithm {
 
     public ArrayList<Point> getResultList();
 
+    public ArrayList<Point> getRestList();
+
     double getProfit();
 
     Point getStartPoint();
+
+    void setProfit(double profit);
+
+    void removePointFromCycle(int index);
+
+    void addPointToCycle(int index, Point point);
 }

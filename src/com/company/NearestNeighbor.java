@@ -2,22 +2,16 @@ package com.company;
 
 import javafx.util.Pair;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NearestNeighbor implements Algorithm {
     private ArrayList<Point> tempPoints;
+    private ArrayList<Point> restPoints;
     private Point startPoint;
     private double endProfit;
-
-    public ArrayList<Point> getPoints() {
-        return tempPoints;
-    }
-
-    public double getEndProfit() {
-        return endProfit;
-    }
 
     public NearestNeighbor() {
         this.tempPoints = new ArrayList<>();
@@ -41,11 +35,17 @@ public class NearestNeighbor implements Algorithm {
             nearestPoint = nearestPointPair.getValue();
             arrList.remove((int)nearestPointPair.getKey());
 
+            if (this.countCurrentProfit(nearestPoint.getProfit(), getDistance(latestPoint, nearestPoint)) < 0) {
+                break;
+            }
+
             this.tempPoints.add(nearestPoint);
 
             this.countProfit(nearestPoint.getProfit(), this.getDistance(latestPoint, nearestPoint));
             latestPoint = nearestPoint;
         }
+
+        this.restPoints = arrList;
 
         this.tempPoints.add(startPoint);
         this.countProfit(startPoint.getProfit(), this.getDistance(latestPoint, startPoint));
@@ -76,13 +76,24 @@ public class NearestNeighbor implements Algorithm {
         this.endProfit += profit - wayLoss * LOSS_CONST;
     }
 
+    private double countCurrentProfit(Integer profit, double wayLoss) {
+        Integer LOSS_CONST = 5;
+
+        return profit - wayLoss * LOSS_CONST;
+    }
+
     private double getDistance(Point pointOne, Point pointTwo) {
-        return Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) *  (pointOne.getY() - pointTwo.getY()));
+        return Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) * (pointOne.getY() - pointTwo.getY()));
     }
 
     @Override
     public ArrayList<Point> getResultList() {
         return this.tempPoints;
+    }
+
+    @Override
+    public ArrayList<Point> getRestList() {
+        return this.restPoints;
     }
 
     @Override
@@ -93,5 +104,22 @@ public class NearestNeighbor implements Algorithm {
     @Override
     public Point getStartPoint() {
         return this.startPoint;
+    }
+
+    @Override
+    public void setProfit(double profit) {
+        this.endProfit = profit;
+    }
+
+    @Override
+    public void removePointFromCycle(int index){
+        Point point = this.tempPoints.remove(index);
+        this.restPoints.add(point);
+    }
+
+    @Override
+    public void addPointToCycle(int index, Point point) {
+        this.tempPoints.add(index, point);
+        this.restPoints.remove(point);
     }
 }

@@ -9,6 +9,7 @@ public class GreedyCycle implements Algorithm {
     private ArrayList<Point> cycle;
     private Point startPoint;
     private double profit;
+    private ArrayList<Point> restList;
 
     public GreedyCycle() {
         this.cycle = new ArrayList<>();
@@ -99,5 +100,25 @@ public class GreedyCycle implements Algorithm {
     @Override
     public Point getStartPoint() {
         return startPoint;
+    }
+
+    @Override
+    public ArrayList<Point> getRestList() {
+        return this.restList;
+    }
+
+    @Override
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
+    @Override
+    public void removePointFromCycle(int index){
+        this.cycle.remove(index);
+    }
+
+    @Override
+    public void addPointToCycle(int index, Point point) {
+        this.cycle.add(index, point);
     }
 }
