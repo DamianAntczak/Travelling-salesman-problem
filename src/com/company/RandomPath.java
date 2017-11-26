@@ -7,6 +7,7 @@ public class RandomPath implements Algorithm
     private ArrayList<Point> path;
     private double profit;
     private Point startPoint;
+    private ArrayList<Point> restList;
 
     @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
@@ -58,5 +59,27 @@ public class RandomPath implements Algorithm
     @Override
     public Point getStartPoint() {
         return startPoint;
+    }
+
+    @Override
+    public ArrayList<Point> getRestList() {
+        return this.restList;
+    }
+
+    @Override
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
+    @Override
+    public void removePointFromCycle(int index){
+        Point point = this.path.remove(index);
+        this.restList.add(point);
+    }
+
+    @Override
+    public void addPointToCycle(int index, Point point) {
+        this.path.add(index, point);
+        this.restList.remove(point);
     }
 }

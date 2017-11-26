@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class LocalSearch {
     public void improveSolution(Algorithm solution) {
-        solution = this.removeMethod(solution);
-        solution = this.addMethod(solution);
-//        solution = this.replaceMethod(solution);
+//        solution = this.removeMethod(solution);
+//        solution = this.addMethod(solution);
+        solution = this.replaceMethod(solution);
         System.out.println(solution.getProfit());
         System.out.println(solution.getResultList());
     }
@@ -56,6 +56,43 @@ public class LocalSearch {
     // wymiana dwoch łuków
     public Algorithm replaceMethod(Algorithm solution) {
         double newProfit;
+        ArrayList<Point> solutionPointList = new ArrayList<>(solution.getResultList());
+
+        for (int currentBasePosition = 0; currentBasePosition < solutionPointList.size() - 4; currentBasePosition++) {
+            for (int currentReplacePosition = currentBasePosition + 3; currentReplacePosition < solutionPointList.size() - 1; currentReplacePosition++) {
+                ArrayList<Point> tempList = new ArrayList<>(solutionPointList);
+
+                Point secondRemovedReplace = tempList.remove(currentReplacePosition + 1);
+                Point firstRemovedReplace = tempList.remove(currentReplacePosition);
+
+                Point secondRemovedBase = tempList.remove(currentBasePosition + 1);
+                Point firstRemovedBase = tempList.remove(currentBasePosition);
+
+                tempList.add(currentBasePosition, firstRemovedReplace);
+                tempList.add(currentBasePosition + 1, secondRemovedReplace);
+
+                tempList.add(currentReplacePosition, firstRemovedBase);
+                tempList.add(currentReplacePosition + 1, secondRemovedBase);
+
+                newProfit = calculateProfitForCycle(tempList);
+
+                if (newProfit > solution.getProfit()) {
+                    solution.removePointFromCycle(currentReplacePosition + 1);
+                    solution.removePointFromCycle(currentReplacePosition);
+                    solution.removePointFromCycle(currentBasePosition + 1);
+                    solution.removePointFromCycle(currentBasePosition);
+
+                    solution.addPointToCycle(currentBasePosition, firstRemovedReplace);
+                    solution.addPointToCycle(currentBasePosition + 1, secondRemovedReplace);
+                    solution.addPointToCycle(currentReplacePosition, firstRemovedBase);
+                    solution.addPointToCycle(currentReplacePosition + 1, secondRemovedBase);
+
+                    solution.setProfit(newProfit);
+
+                    return solution;
+                }
+            }
+        }
 
         return solution;
     }
