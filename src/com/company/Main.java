@@ -24,7 +24,6 @@ public class Main {
 
             LocalSearch localSearch = new LocalSearch();
 
-
             pureResults.forEach((aDouble, algorithm) -> {
                 System.out.print("Current profit: ");
                 System.out.println(aDouble);

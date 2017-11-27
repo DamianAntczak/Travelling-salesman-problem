@@ -24,7 +24,7 @@ public class LocalSearch {
     // usuniecie wierzchołka
     public Algorithm removeMethod(Algorithm solution) {
         double newProfit;
-        for (int i = 1; i < solution.getResultList().size(); i++) {
+        for (int i = 1; i < solution.getResultList().size() - 1; i++) {
             ArrayList<Point> tempList = new ArrayList<>(solution.getResultList());
             tempList.remove(i);
             newProfit = calculateProfitForCycle(tempList);
@@ -46,7 +46,7 @@ public class LocalSearch {
         ArrayList<Point> restList = new ArrayList<>(solution.getRestList());
         ArrayList<Point> solutionPointList = new ArrayList<>(solution.getResultList());
 
-        for (int currentPosition = 0; currentPosition < solutionPointList.size(); currentPosition++) {
+        for (int currentPosition = 1; currentPosition < solutionPointList.size() - 1; currentPosition++) {
             for(Point pointToAdd :restList) {
                 ArrayList<Point> tempList = new ArrayList<>(solutionPointList);
                 tempList.add(currentPosition, pointToAdd);
@@ -68,7 +68,7 @@ public class LocalSearch {
         double newProfit;
         ArrayList<Point> solutionPointList = new ArrayList<>(solution.getResultList());
 
-        for (int currentBasePosition = 0; currentBasePosition < solutionPointList.size() - 2; currentBasePosition++) {
+        for (int currentBasePosition = 1; currentBasePosition < solutionPointList.size() - 2; currentBasePosition++) {
             for (int currentReplacePosition = currentBasePosition + 2; currentReplacePosition < solutionPointList.size(); currentReplacePosition++) {
                 ArrayList<Point> tempList = new ArrayList<>(solutionPointList);
                 ArrayList<Point> subList = new ArrayList<>(tempList.subList(currentBasePosition, currentReplacePosition));
