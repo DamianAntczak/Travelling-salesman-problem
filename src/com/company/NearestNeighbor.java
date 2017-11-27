@@ -28,24 +28,27 @@ public class NearestNeighbor implements Algorithm {
 
         allPointsTemp.remove(startPoint.getIndex());
         ArrayList<Point> arrList = new ArrayList<>();
+        ArrayList<Point> unUsed = new ArrayList<>();
         arrList.addAll(allPointsTemp.values());
 
         while (!arrList.isEmpty()) {
             Pair<Integer, Point> nearestPointPair = this.findNearest(latestPoint, arrList);
             nearestPoint = nearestPointPair.getValue();
-            arrList.remove((int)nearestPointPair.getKey());
 
-            if (this.countCurrentProfit(nearestPoint.getProfit(), getDistance(latestPoint, nearestPoint)) < 0) {
-                break;
+            double currentProfit = this.countCurrentProfit(nearestPoint.getProfit(), getDistance(latestPoint, nearestPoint));
+            if (currentProfit < 0) {
+                unUsed.add(nearestPoint);
+            } else {
+                this.tempPoints.add(nearestPoint);
+
+                this.countProfit(nearestPoint.getProfit(), this.getDistance(latestPoint, nearestPoint));
+                latestPoint = nearestPoint;
             }
 
-            this.tempPoints.add(nearestPoint);
-
-            this.countProfit(nearestPoint.getProfit(), this.getDistance(latestPoint, nearestPoint));
-            latestPoint = nearestPoint;
+            arrList.remove((int)nearestPointPair.getKey());
         }
 
-        this.restPoints = arrList;
+        this.restPoints = unUsed;
 
         this.tempPoints.add(startPoint);
         this.countProfit(startPoint.getProfit(), this.getDistance(latestPoint, startPoint));
