@@ -121,4 +121,9 @@ public class GreedyCycle implements Algorithm {
     public void addPointToCycle(int index, Point point) {
         this.cycle.add(index, point);
     }
+
+    @Override
+    public void setCycle(ArrayList<Point> cycle) {
+        this.cycle = cycle;
+    }
 }

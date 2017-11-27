@@ -20,4 +20,6 @@ public interface Algorithm {
     void removePointFromCycle(int index);
 
     void addPointToCycle(int index, Point point);
+
+    void setCycle(ArrayList<Point> cycle);
 }

@@ -36,7 +36,7 @@ public class NearestNeighbor implements Algorithm {
             nearestPoint = nearestPointPair.getValue();
 
             double currentProfit = this.countCurrentProfit(nearestPoint.getProfit(), getDistance(latestPoint, nearestPoint));
-            if (currentProfit < 0) {
+            if (currentProfit <= 0) {
                 unUsed.add(nearestPoint);
             } else {
                 this.tempPoints.add(nearestPoint);
@@ -124,5 +124,10 @@ public class NearestNeighbor implements Algorithm {
     public void addPointToCycle(int index, Point point) {
         this.tempPoints.add(index, point);
         this.restPoints.remove(point);
+    }
+
+    @Override
+    public void setCycle(ArrayList<Point> cycle) {
+        this.tempPoints = cycle;
     }
 }

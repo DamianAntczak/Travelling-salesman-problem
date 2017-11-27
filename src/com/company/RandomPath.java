@@ -83,4 +83,9 @@ public class RandomPath implements Algorithm
         this.path.add(index, point);
         this.restList.remove(point);
     }
+
+    @Override
+    public void setCycle(ArrayList<Point> cycle) {
+        this.path = cycle;
+    }
 }

@@ -1,14 +1,24 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class LocalSearch {
-    public void improveSolution(Algorithm solution) {
-//        solution = this.removeMethod(solution);
-//        solution = this.addMethod(solution);
-        solution = this.replaceMethod(solution);
+    public Algorithm improveSolution(Algorithm solution) {
+        double oldProfit;
+        double newProfit;
+        do {
+            oldProfit = solution.getProfit();
+            solution = this.removeMethod(solution);
+            solution = this.addMethod(solution);
+            solution = this.replaceMethod(solution);
+            newProfit = solution.getProfit();
+        } while (newProfit > oldProfit);
+
         System.out.println(solution.getProfit());
         System.out.println(solution.getResultList());
+
+        return solution;
     }
 
     // usuniecie wierzchołka
@@ -58,35 +68,21 @@ public class LocalSearch {
         double newProfit;
         ArrayList<Point> solutionPointList = new ArrayList<>(solution.getResultList());
 
-        for (int currentBasePosition = 0; currentBasePosition < solutionPointList.size() - 4; currentBasePosition++) {
-            for (int currentReplacePosition = currentBasePosition + 3; currentReplacePosition < solutionPointList.size() - 1; currentReplacePosition++) {
+        for (int currentBasePosition = 0; currentBasePosition < solutionPointList.size() - 2; currentBasePosition++) {
+            for (int currentReplacePosition = currentBasePosition + 2; currentReplacePosition < solutionPointList.size(); currentReplacePosition++) {
                 ArrayList<Point> tempList = new ArrayList<>(solutionPointList);
-
-                Point secondRemovedReplace = tempList.remove(currentReplacePosition + 1);
-                Point firstRemovedReplace = tempList.remove(currentReplacePosition);
-
-                Point secondRemovedBase = tempList.remove(currentBasePosition + 1);
-                Point firstRemovedBase = tempList.remove(currentBasePosition);
-
-                tempList.add(currentBasePosition, firstRemovedReplace);
-                tempList.add(currentBasePosition + 1, secondRemovedReplace);
-
-                tempList.add(currentReplacePosition, firstRemovedBase);
-                tempList.add(currentReplacePosition + 1, secondRemovedBase);
+                ArrayList<Point> subList = new ArrayList<>(tempList.subList(currentBasePosition, currentReplacePosition));
+                for(int index = currentBasePosition; index <currentReplacePosition; index++) {
+                    tempList.remove(currentBasePosition);
+                }
+                Collections.reverse(subList);
+                tempList.addAll(currentBasePosition, subList);
 
                 newProfit = calculateProfitForCycle(tempList);
+                double oldProfit = solution.getProfit();
 
-                if (newProfit > solution.getProfit()) {
-                    solution.removePointFromCycle(currentReplacePosition + 1);
-                    solution.removePointFromCycle(currentReplacePosition);
-                    solution.removePointFromCycle(currentBasePosition + 1);
-                    solution.removePointFromCycle(currentBasePosition);
-
-                    solution.addPointToCycle(currentBasePosition, firstRemovedReplace);
-                    solution.addPointToCycle(currentBasePosition + 1, secondRemovedReplace);
-                    solution.addPointToCycle(currentReplacePosition, firstRemovedBase);
-                    solution.addPointToCycle(currentReplacePosition + 1, secondRemovedBase);
-
+                if (newProfit > oldProfit) {
+                    solution.setCycle(tempList);
                     solution.setProfit(newProfit);
 
                     return solution;
