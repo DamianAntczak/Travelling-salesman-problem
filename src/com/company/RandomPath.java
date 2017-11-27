@@ -13,6 +13,7 @@ public class RandomPath implements Algorithm
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
         this.path = new ArrayList<>(allPoints.size());
         TreeMap<Integer, Point> tempPoints = new TreeMap<>(allPoints);
+        restList = new ArrayList<>(100);
 
         Random random = new Random();
         while (tempPoints.size() > 1){
