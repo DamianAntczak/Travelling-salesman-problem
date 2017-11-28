@@ -9,6 +9,8 @@ import java.util.*;
 
 public class Main {
 
+    private static int height;
+
     public static void main(String[] args) {
         PointsReader pointsReader = new PointsReader();
         try {
@@ -22,18 +24,18 @@ public class Main {
             TreeMap<Double, Algorithm> pureResults = getAllResults(points);
             TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
 
-            LocalSearch localSearch = new LocalSearch();
-
-            pureResults.forEach((aDouble, algorithm) -> {
-                System.out.print("Current profit: ");
-                System.out.println(aDouble);
-                System.out.print("Improve solution: ");
-                Algorithm solution = localSearch.improveSolution(algorithm);
-                results.put(solution.getProfit(), solution);
-            });
+//            LocalSearch localSearch = new LocalSearch();
+//
+//            pureResults.forEach((aDouble, algorithm) -> {
+//                System.out.print("Current profit: ");
+//                System.out.println(aDouble);
+//                System.out.print("Improve solution: ");
+//                Algorithm solution = localSearch.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+//            });
 
             final int[] i = {0};
-            results.forEach((aDouble, algorithm) -> {
+            pureResults.forEach((aDouble, algorithm) -> {
                 System.out.println(aDouble);
                 if (i[0] < 6) {
                     try {
@@ -72,7 +74,7 @@ public class Main {
         int maxX = getMaxX(points);
         int maxY = getMaxY(points);
         BufferedImage img = new BufferedImage(maxX + 150, maxY + 150, BufferedImage.TYPE_INT_RGB);
-
+        height = img.getHeight();
         fillBackground(img);
 
         Graphics2D graphics = img.createGraphics();
@@ -91,17 +93,17 @@ public class Main {
     private static void drawStartPoint(Point startPoint, Graphics2D graphics) {
         graphics.setStroke(new BasicStroke(30));
         graphics.setColor(Color.BLUE);
-        graphics.drawOval(startPoint.getX(), startPoint.getY(), 10, 10);
+        graphics.drawOval(startPoint.getX(), yToScreen(startPoint.getY()), 10, 10);
 
     }
 
     private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
-            Algorithm nearestNeighbor = new NearestNeighbor();
+            Algorithm nearestNeighbor = new GreedyCycle();
             nearestNeighbor.execute(points.get(i), points);
             results.put(nearestNeighbor.getProfit(), nearestNeighbor);
-         }
+        }
         return results;
     }
 
@@ -120,21 +122,25 @@ public class Main {
         for (int i = 0; i < path.size() - 1; i++) {
             Point point1 = path.get(i);
             Point point2 = path.get(i + 1);
-            graphics.drawLine(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+            graphics.drawLine(point1.getX(), yToScreen(point1.getY()), point2.getX(), yToScreen(point2.getY()));
 
         }
-        graphics.drawLine(path.get(0).getX(), path.get(0).getY(), path.get(path.size() - 1).getX(), path.get(path.size() - 1).getY());
+        graphics.drawLine(path.get(0).getX(), yToScreen(path.get(0).getY()), path.get(path.size() - 1).getX(), yToScreen(path.get(path.size() - 1).getY()));
+    }
+
+    private static int yToScreen(int y) {
+        return height - y;
     }
 
     private static void drawPoints(Map<Integer, Point> points, Graphics2D graphics) {
         graphics.setStroke(new BasicStroke(25));
         points.forEach((integer, point) -> {
             graphics.setColor(new Color(135, 135, 135));
-            graphics.drawOval(point.getX(), point.getY(), 10, 10);
+            graphics.drawOval(point.getX(), yToScreen(point.getY()), 10, 10);
             graphics.setColor(new Color(137, 0, 0));
-            graphics.drawString(String.valueOf(point.getIndex()), point.getX(), point.getY() - 20);
+            graphics.drawString(String.valueOf(point.getIndex()), point.getX(), yToScreen(point.getY() - 20));
             graphics.setColor(new Color(18, 132, 1));
-            graphics.drawString(String.valueOf(point.getProfit()), point.getX(), point.getY() + 60);
+            graphics.drawString(String.valueOf(point.getProfit()), point.getX(), yToScreen(point.getY() + 60));
         });
     }
 
