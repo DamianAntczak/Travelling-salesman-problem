@@ -5,16 +5,44 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 
 public class DrawPathHelper {
 
     private int height;
 
-    public void saveToFile(Map<Integer, Point> points, ArrayList<Point> path, String fileName, Point startPoint) throws IOException {
+
+    public void drawBestResults(Map<Integer, Point> points, TreeMap<Double, Algorithm> results) {
+        final int[] i = {0};
+        results.forEach((aDouble, algorithm) -> {
+            System.out.println(i[0] + ": "+aDouble);
+            if (i[0] < 6) {
+                try {
+                    String className = algorithm.getClass().getSimpleName();
+                    File dir = new File("." + File.separator + className);
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
+
+                    if(i[0] == 0) {
+                        for (int x = 0; x < algorithm.getResultList().size(); x++) {
+                            System.out.print(algorithm.getResultList().get(x).getIndex());
+                            System.out.print(" -> ");
+                        }
+                    }
+
+                    String fileName = dir.getCanonicalPath() + File.separator + "points" + String.valueOf(aDouble).replace(".", "_");
+                    saveToFile(points, algorithm.getResultList(), fileName, algorithm.getStartPoint());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            i[0]++;
+        });
+    }
+
+
+    private void saveToFile(Map<Integer, Point> points, ArrayList<Point> path, String fileName, Point startPoint) throws IOException {
         int maxX = getMaxX(points);
         int maxY = getMaxY(points);
         BufferedImage img = new BufferedImage(maxX + 150, maxY + 150, BufferedImage.TYPE_INT_RGB);

@@ -18,49 +18,54 @@ public class Main {
             pointsReader.loadKorB100();
             pointsReader.printPoints();
             System.out.println();
+            System.out.println("Choose algorithm:");
+            System.out.println("R/r - RandomPath");
+            System.out.println("G/g - GreedyCycle");
+            System.out.println("N/n - NearestNeighbor");
+
+            Scanner s = new Scanner(System.in);
+            String str = s.nextLine();
 
             Map<Integer, Point> points = pointsReader.getPoints();
+            TreeMap<Double, Algorithm> pureResults = null;
+            try {
+                switch (str){
+                    case "r":
+                    case "R":
+                        pureResults = getAllResults(points, "RandomPath");
+                        break;
+                    case "G":
+                    case "g":
+                        pureResults = getAllResults(points, "GreedyCycle");
+                        break;
+                    case "N":
+                    case "n":
+                        pureResults = getAllResults(points, "NearestNeighbor");
+                        break;
+                }
 
-            TreeMap<Double, Algorithm> pureResults = getAllResults(points);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
             TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
 
-//            LocalSearch localSearch = new LocalSearch();
-//
-//            pureResults.forEach((aDouble, algorithm) -> {
-//                System.out.print("Current profit: ");
-//                System.out.println(aDouble);
-//                System.out.print("Improve solution: ");
-//                Algorithm solution = localSearch.improveSolution(algorithm);
-//                results.put(solution.getProfit(), solution);
-//            });
+            LocalSearch localSearch = new LocalSearch();
 
-            final int[] i = {0};
-            DrawPathHelper drawPathHelper = new DrawPathHelper();
             pureResults.forEach((aDouble, algorithm) -> {
-                System.out.println(i[0] + ": "+aDouble);
-                if (i[0] < 6) {
-                    try {
-                        String className = algorithm.getClass().getSimpleName();
-                        File dir = new File("." + File.separator + className);
-                        if (!dir.exists()) {
-                            dir.mkdir();
-                        }
-
-//                        if(i[0] == 0) {
-//                            for (int x = 0; x < algorithm.getResultList().size(); x++) {
-//                                System.out.print(algorithm.getResultList().get(x).getIndex());
-//                                System.out.print(" -> ");
-//                            }
-//                        }
-
-                        String fileName = dir.getCanonicalPath() + File.separator + "points" + String.valueOf(aDouble).replace(".", "_");
-                        drawPathHelper.saveToFile(points, algorithm.getResultList(), fileName, algorithm.getStartPoint());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                i[0]++;
+                System.out.print("Current profit: ");
+                System.out.println(aDouble);
+                System.out.print("Improve solution: ");
+                Algorithm solution = localSearch.improveSolution(algorithm);
+                results.put(solution.getProfit(), solution);
             });
+
+
+            DrawPathHelper drawPathHelper = new DrawPathHelper();
+            drawPathHelper.drawBestResults(points, results);
 
 
             //System.out.println(points.size());
@@ -72,12 +77,14 @@ public class Main {
     }
 
 
-    private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points) {
+
+    private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points, String algorithmName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        algorithmName = "com.company." + algorithmName;
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
-            Algorithm nearestNeighbor = new RandomPath();
-            nearestNeighbor.execute(points.get(i), points);
-            results.put(nearestNeighbor.getProfit(), nearestNeighbor);
+            Algorithm algorithm = (Algorithm) Class.forName(algorithmName).newInstance();
+            algorithm.execute(points.get(i), points);
+            results.put(algorithm.getProfit(), algorithm);
         }
         return results;
     }
