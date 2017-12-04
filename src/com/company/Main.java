@@ -30,7 +30,7 @@ public class Main {
             Map<Integer, Point> points = pointsReader.getPoints();
             TreeMap<Double, Algorithm> pureResults = null;
             try {
-                switch (str){
+                switch (str) {
                     case "r":
                     case "R":
                         pureResults = getAllResults(points, "RandomPath");
@@ -54,15 +54,20 @@ public class Main {
             }
             TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
 
-            LocalSearch localSearch = new LocalSearch();
-
-            pureResults.forEach((aDouble, algorithm) -> {
-//                System.out.print("Current profit: ");
-//                System.out.println(aDouble);
-//                System.out.print("Improve solution: ");
-                Algorithm solution = localSearch.improveSolution(algorithm);
-                results.put(solution.getProfit(), solution);
-            });
+//            LocalSearch localSearch = new LocalSearch();
+//
+//            pureResults.forEach((aDouble, algorithm) -> {
+////                System.out.print("Current profit: ");
+////                System.out.println(aDouble);
+////                System.out.print("Improve solution: ");
+//                Algorithm solution = localSearch.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+//            });
+//            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
+//            pureResults.forEach((aDouble, algorithm) -> {
+//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+//            });
 
 
             DrawPathHelper drawPathHelper = new DrawPathHelper();
@@ -72,11 +77,14 @@ public class Main {
             //System.out.println(points.size());
 
 
-        } catch (IOException e) {
+        } catch (
+                IOException e)
+
+        {
             e.printStackTrace();
         }
-    }
 
+    }
 
 
     private static TreeMap<Double, Algorithm> getAllResults(Map<Integer, Point> points, String algorithmName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {

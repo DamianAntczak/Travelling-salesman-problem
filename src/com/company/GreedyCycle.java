@@ -113,7 +113,7 @@ public class GreedyCycle implements Algorithm {
     }
 
     private double countProfit(Integer profit, double wayLoss) {
-        Integer LOSS_CONST = 5;
+        Integer LOSS_CONST = 6;
 
         return profit - wayLoss * LOSS_CONST;
     }
