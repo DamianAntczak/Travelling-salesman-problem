@@ -17,6 +17,16 @@ public class GreedyCycle implements Algorithm {
     }
 
     @Override
+    public GreedyCycle clone() {
+        try {
+            return (GreedyCycle) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
         Map<Integer, Point> tempPoints = new HashMap<>(allPoints);
 

@@ -16,6 +16,16 @@ public class Regret implements Algorithm {
     }
 
     @Override
+    public Regret clone() {
+        try {
+            return (Regret) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
         this.startPoint = startPoint;
         path.add(startPoint);

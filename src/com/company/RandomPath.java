@@ -10,6 +10,16 @@ public class RandomPath implements Algorithm
     private ArrayList<Point> restList;
 
     @Override
+    public RandomPath clone() {
+        try {
+            return (RandomPath) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
         this.path = new ArrayList<>(allPoints.size());
         TreeMap<Integer, Point> tempPoints = new TreeMap<>(allPoints);

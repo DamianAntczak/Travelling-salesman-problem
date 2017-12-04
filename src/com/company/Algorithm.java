@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface Algorithm {
+public interface Algorithm extends Cloneable {
     public void execute(Point startPoint, Map<Integer, Point> allPoints);
 
     public ArrayList<Point> getResultList();
@@ -22,4 +22,6 @@ public interface Algorithm {
     void addPointToCycle(int index, Point point);
 
     void setCycle(ArrayList<Point> cycle);
+
+    Algorithm clone();
 }

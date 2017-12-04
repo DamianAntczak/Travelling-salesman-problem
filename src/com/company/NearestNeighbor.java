@@ -19,6 +19,16 @@ public class NearestNeighbor implements Algorithm {
     }
 
     @Override
+    public NearestNeighbor clone() {
+        try {
+            return (NearestNeighbor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
         this.startPoint = startPoint;
         Map<Integer, Point> allPointsTemp = new HashMap<>(allPoints);

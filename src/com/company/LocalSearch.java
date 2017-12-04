@@ -5,18 +5,33 @@ import java.util.Collections;
 
 public class LocalSearch {
     public Algorithm improveSolution(Algorithm solution) {
+        Algorithm removeSolution;
+        Algorithm addSolution;
+        Algorithm replaceSolution;
         double oldProfit;
         double newProfit;
         do {
             oldProfit = solution.getProfit();
-            solution = this.removeMethod(solution);
-            solution = this.addMethod(solution);
-            solution = this.replaceMethod(solution);
+            addSolution = this.addMethod(solution.clone());
+            removeSolution = this.removeMethod(solution.clone());
+            replaceSolution = this.replaceMethod(solution.clone());
+            if (removeSolution.getProfit() > addSolution.getProfit()) {
+                if(removeSolution.getProfit() > replaceSolution.getProfit()) {
+                    solution = removeSolution;
+                } else {
+                    solution = replaceSolution;
+                }
+            } else if (addSolution.getProfit() > replaceSolution.getProfit()) {
+                solution = addSolution;
+            } else {
+                solution = replaceSolution;
+            }
+
             newProfit = solution.getProfit();
         } while (newProfit > oldProfit);
 
-        System.out.println(solution.getProfit());
-        System.out.println(solution.getResultList());
+//        System.out.println(solution.getProfit());
+//        System.out.println(solution.getResultList());
 
         return solution;
     }

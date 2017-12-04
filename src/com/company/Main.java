@@ -22,6 +22,7 @@ public class Main {
             System.out.println("R/r - RandomPath");
             System.out.println("G/g - GreedyCycle");
             System.out.println("N/n - NearestNeighbor");
+            System.out.println("T/t - Regret");
 
             Scanner s = new Scanner(System.in);
             String str = s.nextLine();
@@ -42,6 +43,10 @@ public class Main {
                     case "n":
                         pureResults = getAllResults(points, "NearestNeighbor");
                         break;
+                    case "T":
+                    case "t":
+                        pureResults = getAllResults(points, "Regret");
+                        break;
                 }
 
             } catch (ClassNotFoundException e) {
@@ -56,9 +61,9 @@ public class Main {
             LocalSearch localSearch = new LocalSearch();
 
             pureResults.forEach((aDouble, algorithm) -> {
-                System.out.print("Current profit: ");
-                System.out.println(aDouble);
-                System.out.print("Improve solution: ");
+//                System.out.print("Current profit: ");
+//                System.out.println(aDouble);
+//                System.out.print("Improve solution: ");
                 Algorithm solution = localSearch.improveSolution(algorithm);
                 results.put(solution.getProfit(), solution);
             });
