@@ -49,11 +49,7 @@ public class Main {
                         break;
                 }
 
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
             TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
@@ -88,8 +84,11 @@ public class Main {
         TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
         for (int i = 1; i <= 100; i++) {
             Algorithm algorithm = (Algorithm) Class.forName(algorithmName).newInstance();
+            long startTime = System.nanoTime();
             algorithm.execute(points.get(i), points);
+            long stopTime = System.nanoTime();
             results.put(algorithm.getProfit(), algorithm);
+            System.out.println("Execution time " + (stopTime - startTime));
         }
         return results;
     }

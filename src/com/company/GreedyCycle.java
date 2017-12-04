@@ -11,8 +11,12 @@ public class GreedyCycle implements Algorithm {
     private double profit;
     private ArrayList<Point> restList;
 
+    private List<Edge> edges;
+
     public GreedyCycle() {
+        this.restList = new ArrayList<>();
         this.cycle = new ArrayList<>();
+        this.edges = new ArrayList<>();
         this.profit = 0.0;
     }
 
@@ -34,6 +38,14 @@ public class GreedyCycle implements Algorithm {
         cycle.add(startPoint);
         tempPoints.remove(startPoint.getIndex());
         findPath(tempPoints);
+        //addLastEdgeProfit();
+    }
+
+    private void addLastEdgeProfit() {
+        Point point1 = startPoint;
+        Point point2 = cycle.get(cycle.size() - 1);
+        Double distance = point1.getDistance(point2);
+        profit += countProfit(point1.getProfit(), distance);
     }
 
     private Pair<Point, Double> findNearestPoint(Point forPoint, Map<Integer, Point> points) {
@@ -86,6 +98,9 @@ public class GreedyCycle implements Algorithm {
     }
 
     private void findPath(Map<Integer, Point> points) {
+
+
+        Point lastPoint = null;
         while (points.size() > 0) {
             Map<Integer, Point> integerPointMap = expandCycle(points);
             if (integerPointMap == null)
@@ -124,12 +139,14 @@ public class GreedyCycle implements Algorithm {
 
     @Override
     public void removePointFromCycle(int index){
-        this.cycle.remove(index);
+        Point remove = this.cycle.remove(index);
+        this.restList.add(remove);
     }
 
     @Override
     public void addPointToCycle(int index, Point point) {
         this.cycle.add(index, point);
+        this.restList.remove(point);
     }
 
     @Override
