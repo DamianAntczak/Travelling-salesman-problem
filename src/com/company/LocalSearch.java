@@ -2,6 +2,7 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class LocalSearch {
     public Algorithm improveSolution(Algorithm solution) {
@@ -32,6 +33,73 @@ public class LocalSearch {
 
 //        System.out.println(solution.getProfit());
 //        System.out.println(solution.getResultList());
+
+        return solution;
+    }
+
+    public Algorithm iteratedLocalSearch(Algorithm solution, double avgTime) {
+        final long startTime = System.currentTimeMillis();
+        Random rand = new Random();
+        do {
+            Algorithm solutionCopy = solution.clone();
+            for(int i=0; i < 4; i++) {
+                int choice = rand.nextInt(3);
+                switch (choice) {
+                    case 0:
+                        if ((solutionCopy.getResultList().size() - 2) > 0) {
+                            int n = rand.nextInt(solutionCopy.getResultList().size() - 2 ) + 1;
+
+                            solutionCopy.removePointFromCycle(n);
+                            solutionCopy.setProfit(calculateProfitForCycle(solutionCopy.getResultList()));
+                        }
+
+                        break;
+                    case 1:
+                        if ((solutionCopy.getResultList().size() - 2 ) > 0 && solutionCopy.getRestList().size() > 0) {
+                            int currentPosition = rand.nextInt(solutionCopy.getResultList().size() - 2 ) + 1;
+                            int pointToAdd = rand.nextInt(solutionCopy.getRestList().size());
+
+                            solutionCopy.addPointToCycle(currentPosition, solutionCopy.getRestList().get(pointToAdd));
+                            solutionCopy.setProfit(calculateProfitForCycle(solutionCopy.getResultList()));
+                        }
+                        break;
+                    case 2:
+                        int currentBasePosition = rand.nextInt(solutionCopy.getResultList().size() - 1 ) + 1;
+                        if ((solutionCopy.getResultList().size() - currentBasePosition - 2) > 0) {
+                            int currentReplacePosition = rand.nextInt(solutionCopy.getResultList().size() - currentBasePosition - 2) + currentBasePosition + 2;
+                            if (currentBasePosition == 0) {
+                                System.out.print("alert1");
+                            }
+                            if (currentReplacePosition == solutionCopy.getResultList().size()) {
+                                System.out.print("alert2");
+                            }
+                            if ((currentReplacePosition - currentBasePosition) < 2) {
+                                System.out.print("alert3");
+                            }
+                            ArrayList<Point> tempList = new ArrayList<>(solutionCopy.getResultList());
+                            ArrayList<Point> subList = new ArrayList<>(tempList.subList(currentBasePosition, currentReplacePosition));
+                            for(int index = currentBasePosition; index <currentReplacePosition; index++) {
+                                tempList.remove(currentBasePosition);
+                            }
+                            Collections.reverse(subList);
+                            tempList.addAll(currentBasePosition, subList);
+
+                            solutionCopy.setCycle(tempList);
+                            solutionCopy.setProfit(calculateProfitForCycle(tempList));
+                        }
+
+                        break;
+                }
+            }
+
+            solutionCopy = improveSolution(solutionCopy);
+            if(solutionCopy.getProfit()>solution.getProfit()) {
+                solution = solutionCopy;
+            }
+
+        } while ((System.currentTimeMillis() - startTime) <= avgTime);
+
+        System.out.println(solution.getProfit());
 
         return solution;
     }
