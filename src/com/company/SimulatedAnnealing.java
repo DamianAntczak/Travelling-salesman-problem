@@ -1,7 +1,6 @@
 package com.company;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class SimulatedAnnealing {
@@ -23,10 +22,7 @@ public class SimulatedAnnealing {
 
         double profit = getProfit(tempResult);
 
-        if (profit > oldProfit)
-            return tempResult;
-        else
-            return resultList;
+        return tempResult;
     }
 
     private double getProfit(ArrayList<Point> tempResult) {
@@ -46,14 +42,33 @@ public class SimulatedAnnealing {
 
     public Algorithm improveSolution(Algorithm solution){
         Algorithm newSolution = solution.clone();
-        int i = 0;
         ArrayList<Point> currentPath = new ArrayList<>(newSolution.getResultList());
-        while ( i < 1000){
-            currentPath = replacePoints(currentPath);
-            i++;
-        }
+
+        Random random = new Random();
+        double temperature = 100.0;
+        do {
+            int i = 0;
+            while (i < 100) {
+                ArrayList<Point> tempPath = replacePoints(currentPath);
+                double newProfit = getProfit(tempPath);
+                double oldProfit = getProfit(currentPath);
+                if (newProfit > oldProfit) {
+                    currentPath = tempPath;
+                } else {
+                    if (Math.exp((newProfit - oldProfit) / temperature) > random.nextDouble()) {
+                        currentPath = tempPath;
+                    }
+
+                }
+                i++;
+            }
+            temperature -= 1.0;
+
+        }while (temperature >= 0.0);
+
         newSolution.setProfit(getProfit(currentPath));
         newSolution.setCycle(currentPath);
+
         return newSolution;
     }
 

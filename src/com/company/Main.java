@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
         PointsReader pointsReader = new PointsReader();
         LocalSearch localSearch = new LocalSearch();
+        SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
 
         try {
             pointsReader.loadKorA100();
@@ -98,7 +99,8 @@ public class Main {
 //                System.out.print("Current profit: ");
 //                System.out.println(aDouble);
 //                System.out.print("Improve solution: ");
-                Algorithm solution = localSearch.improveSolution(algorithm);
+//                Algorithm solution = localSearch.improveSolution(algorithm);
+                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
                 results.put(solution.getProfit(), solution);
             });
 
