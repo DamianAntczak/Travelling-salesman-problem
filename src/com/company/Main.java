@@ -37,9 +37,15 @@ public class Main {
                     double averageTime = bestResultAndAvgTime.getKey();
                     TreeMap<Double, Algorithm> bestResults = bestResultAndAvgTime.getValue();
                     DrawPathHelper drawPathHelper = new DrawPathHelper();
-                    drawPathHelper.drawBestResults(points, bestResults);
+//                    drawPathHelper.drawBestResults(points, bestResults);
 
-                    algorithm = localSearch.iteratedLocalSearch(algorithm, averageTime);
+                    TreeMap<Double, Algorithm> ILSarray = new TreeMap<>(Collections.reverseOrder());
+                    for(int i = 0; i<20; i++) {
+                        algorithm = localSearch.iteratedLocalSearch(algorithm, averageTime);
+                        ILSarray.put(algorithm.getProfit(), algorithm);
+                    }
+
+                    drawPathHelper.drawBestResults(points, ILSarray);
                     break;
             }
 
