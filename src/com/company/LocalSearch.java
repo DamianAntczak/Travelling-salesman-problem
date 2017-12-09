@@ -188,7 +188,7 @@ public class LocalSearch {
     }
 
     private double countCurrentProfit(Point pointOne, Point pointTwo) {
-        Integer LOSS_CONST = 5;
+        Integer LOSS_CONST = 6;
         double way = Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) * (pointOne.getY() - pointTwo.getY()));
 
         return pointTwo.getProfit() - way * LOSS_CONST;

@@ -1,5 +1,7 @@
 package com.company;
 
+import javafx.util.Pair;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,13 +33,15 @@ public class Main {
             switch (str){
                 case "Y":
                 case "y":
-                    Algorithm algorithm = new NearestNeighbor();
+                    Algorithm algorithm = new RandomPath();
                     algorithm.execute(points.get(1), points);
-                    System.out.print("Current profit: ");
-                    System.out.println(algorithm.getProfit());
-                    System.out.print("Improved solution: ");
-                    localSearch.iteratedLocalSearch(algorithm, Msls(points));
-//                    localSearch.iteratedLocalSearch(algorithm, 74990);
+                    Pair<Double, TreeMap<Double, Algorithm>> bestResultAndAvgTime = Msls(points);
+                    double averageTime = bestResultAndAvgTime.getKey();
+                    TreeMap<Double, Algorithm> bestResults = bestResultAndAvgTime.getValue();
+                    DrawPathHelper drawPathHelper = new DrawPathHelper();
+                    drawPathHelper.drawBestResults(points, bestResults);
+
+                    algorithm = localSearch.iteratedLocalSearch(algorithm, averageTime);
                     break;
             }
 
@@ -47,7 +51,6 @@ public class Main {
             System.out.println("G/g - GreedyCycle");
             System.out.println("N/n - NearestNeighbor");
             System.out.println("T/t - Regret");
-            System.out.println("M/m - Multiple Start Local Search");
             str = s.nextLine();
             try {
                 switch (str) {
@@ -65,10 +68,6 @@ public class Main {
                         break;
                     case "T":
                     case "t":
-                        pureResults = getAllResults(points, "Regret");
-                        break;
-                    case "M":
-                    case "m":
                         pureResults = getAllResults(points, "Regret");
                         break;
                 }
@@ -129,37 +128,34 @@ public class Main {
             algorithm.execute(points.get(i), points);
             long stopTime = System.nanoTime();
             results.put(algorithm.getProfit(), algorithm);
-            System.out.println("Execution time " + (stopTime - startTime));
+//            System.out.println("Execution time " + (stopTime - startTime));
         }
         return results;
     }
 
-    private static double Msls(Map<Integer, Point> points) {
+    private static Pair<Double, TreeMap<Double, Algorithm>> Msls(Map<Integer, Point> points) {
         List<Long> timeArray = new ArrayList<Long>();
+        TreeMap<Double, Algorithm> best20results = new TreeMap<>(Collections.reverseOrder());
 
         try {
             TreeMap<Double, Algorithm> pureResults = null;
             LocalSearch localSearch = new LocalSearch();
-//            TreeMap<Double, Algorithm> best20results = new TreeMap<>(Collections.reverseOrder());
             for(int i = 0; i < 20; i++) {
-//                TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
+                TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
                 pureResults = getAllResults(points, "RandomPath");
                 final long startTime = System.currentTimeMillis();
                 pureResults.forEach((aDouble, algorithm) -> {
 //                    final long startLocalTime = System.currentTimeMillis();
-//                    System.out.print("Current profit: ");
-//                    System.out.println(aDouble);
-//                    System.out.print("Improve solution: ");
                     Algorithm solution = localSearch.improveSolution(algorithm);
 //                    final long endLocalTime = System.currentTimeMillis();
 //                    System.out.println("local search execution time: " + (endLocalTime - startLocalTime) + " milliseconds");
-//                    results.put(solution.getProfit(), solution);
+                    results.put(solution.getProfit(), solution);
                 });
                 final long endTime = System.currentTimeMillis();
 
                 System.out.println("Total execution time: " + (endTime - startTime) + " milliseconds");
                 timeArray.add((endTime - startTime));
-//                best20results.put(results.firstKey(), results.get(results.firstKey()));
+                best20results.put(results.firstKey(), results.get(results.firstKey()));
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -169,6 +165,12 @@ public class Main {
             e.printStackTrace();
         }
 
-        return timeArray.stream().mapToDouble(val -> val).average().getAsDouble();
+        best20results.forEach((aDouble, algorithm) -> {
+            System.out.println(aDouble);
+        });
+
+        System.out.print("avg time: ");
+        System.out.println(timeArray.stream().mapToDouble(val -> val).average().getAsDouble());
+        return new Pair<Double, TreeMap<Double, Algorithm>>(timeArray.stream().mapToDouble(val -> val).average().getAsDouble(), best20results);
     }
 }

@@ -84,13 +84,13 @@ public class NearestNeighbor implements Algorithm {
     }
 
     private void countProfit(Integer profit, double wayLoss) {
-        Integer LOSS_CONST = 5;
+        Integer LOSS_CONST = 6;
 
         this.endProfit += profit - wayLoss * LOSS_CONST;
     }
 
     private double countCurrentProfit(Integer profit, double wayLoss) {
-        Integer LOSS_CONST = 5;
+        Integer LOSS_CONST = 6;
 
         return profit - wayLoss * LOSS_CONST;
     }
