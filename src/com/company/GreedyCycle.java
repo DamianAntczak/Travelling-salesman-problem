@@ -154,4 +154,9 @@ public class GreedyCycle implements Algorithm {
     public void setCycle(ArrayList<Point> cycle) {
         this.cycle = cycle;
     }
+
+    @Override
+    public void setRestList(ArrayList<Point> restList) {
+
+    }
 }

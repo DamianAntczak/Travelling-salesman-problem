@@ -15,6 +15,7 @@ public class Main {
         PointsReader pointsReader = new PointsReader();
         LocalSearch localSearch = new LocalSearch();
         SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
+        HybridEvolutionary hybridEvolutionary = new HybridEvolutionary();
 
         try {
             pointsReader.loadKorA100();
@@ -49,12 +50,14 @@ public class Main {
                     break;
             }
 
+            TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
             System.out.println();
             System.out.println("Choose algorithm:");
             System.out.println("R/r - RandomPath");
             System.out.println("G/g - GreedyCycle");
             System.out.println("N/n - NearestNeighbor");
             System.out.println("T/t - Regret");
+            System.out.println("H/h - Hybrid");
             str = s.nextLine();
             try {
                 switch (str) {
@@ -74,26 +77,23 @@ public class Main {
                     case "t":
                         pureResults = getAllResults(points, "Regret");
                         break;
+                    case "S":
+                    case "s":
+                        pureResults = getAllResults(points, "RandomPath");
+                        pureResults.forEach((aDouble, algorithm) -> {
+                            Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+                            results.put(solution.getProfit(), solution);
+                        });
+                        break;
+                    case "H":
+                    case "h":
+                        pureResults = hybridEvolutionary.improveSolution(getAllResults(points, "RandomPath"), points);
+                        break;
                 }
 
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-
-            TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
-
-            pureResults.forEach((aDouble, algorithm) -> {
-//                System.out.print("Current profit: ");
-//                System.out.println(aDouble);
-//                System.out.print("Improve solution: ");
-                Algorithm solution = localSearch.improveSolution(algorithm);
-                results.put(solution.getProfit(), solution);
-            });
-//            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
-//            pureResults.forEach((aDouble, algorithm) -> {
-//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
-//                results.put(solution.getProfit(), solution);
-//            });
 
 
 //            pureResults.forEach((aDouble, algorithm) -> {
@@ -101,9 +101,25 @@ public class Main {
 //                System.out.println(aDouble);
 //                System.out.print("Improve solution: ");
 //                Algorithm solution = localSearch.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+
+//                results.put(algorithm.getProfit(), algorithm);
+//            });
+//            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
+//            pureResults.forEach((aDouble, algorithm) -> {
 //                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
 //                results.put(solution.getProfit(), solution);
 //            });
+
+
+            pureResults.forEach((aDouble, algorithm) -> {
+//                System.out.print("Current profit: ");
+//                System.out.println(aDouble);
+//                System.out.print("Improve solution: ");
+//                Algorithm solution = localSearch.improveSolution(algorithm);
+//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+                results.put(algorithm.getProfit(), algorithm);
+            });
 
             DrawPathHelper drawPathHelper = new DrawPathHelper();
             drawPathHelper.drawBestResults(points, results);
@@ -157,11 +173,7 @@ public class Main {
                 timeArray.add((endTime - startTime));
                 best20results.put(results.firstKey(), results.get(results.firstKey()));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 

@@ -140,4 +140,9 @@ public class NearestNeighbor implements Algorithm {
     public void setCycle(ArrayList<Point> cycle) {
         this.tempPoints = cycle;
     }
+
+    @Override
+    public void setRestList(ArrayList<Point> restList) {
+
+    }
 }

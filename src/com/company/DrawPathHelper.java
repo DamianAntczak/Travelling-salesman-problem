@@ -66,8 +66,8 @@ public class DrawPathHelper {
     private void drawStartPoint(Point startPoint, Graphics2D graphics) {
         graphics.setStroke(new BasicStroke(30));
         graphics.setColor(Color.BLUE);
-        graphics.drawOval(startPoint.getX(), yToScreen(startPoint.getY()), 10, 10);
-
+        if(startPoint != null)
+            graphics.drawOval(startPoint.getX(), yToScreen(startPoint.getY()), 10, 10);
     }
 
     private int getMaxY(Map<Integer, Point> points) {

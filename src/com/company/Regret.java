@@ -148,4 +148,9 @@ public class Regret implements Algorithm {
     public void setCycle(ArrayList<Point> cycle) {
         this.path = cycle;
     }
+
+    @Override
+    public void setRestList(ArrayList<Point> restList) {
+
+    }
 }

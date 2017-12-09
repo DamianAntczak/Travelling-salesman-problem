@@ -23,5 +23,7 @@ public interface Algorithm extends Cloneable {
 
     void setCycle(ArrayList<Point> cycle);
 
+    void setRestList(ArrayList<Point> restList);
+
     Algorithm clone();
 }
