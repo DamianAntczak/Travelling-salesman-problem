@@ -15,7 +15,7 @@ public class DrawPathHelper {
     public void drawBestResults(Map<Integer, Point> points, TreeMap<Double, Algorithm> results) {
         final int[] i = {0};
         results.forEach((aDouble, algorithm) -> {
-            System.out.println(i[0] + ": "+aDouble);
+            System.out.println(aDouble);
             if (i[0] < 6) {
                 try {
                     String className = algorithm.getClass().getSimpleName();
@@ -31,6 +31,7 @@ public class DrawPathHelper {
                         }
                     }
 
+                    System.out.println();
                     String fileName = dir.getCanonicalPath() + File.separator + "points" + String.valueOf(aDouble).replace(".", "_");
                     saveToFile(points, algorithm.getResultList(), fileName, algorithm.getStartPoint());
                 } catch (IOException e) {

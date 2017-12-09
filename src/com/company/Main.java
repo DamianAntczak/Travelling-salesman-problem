@@ -11,9 +11,6 @@ import java.util.*;
 import java.util.List;
 
 public class Main {
-
-    private static int height;
-
     public static void main(String[] args) {
         PointsReader pointsReader = new PointsReader();
         LocalSearch localSearch = new LocalSearch();
@@ -77,40 +74,35 @@ public class Main {
                 e.printStackTrace();
             }
 
-//            LocalSearch localSearch = new LocalSearch();
-//
-//            pureResults.forEach((aDouble, algorithm) -> {
-////                System.out.print("Current profit: ");
-////                System.out.println(aDouble);
-////                System.out.print("Improve solution: ");
-//                Algorithm solution = localSearch.improveSolution(algorithm);
-//                results.put(solution.getProfit(), solution);
-//            });
-//            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
-//            pureResults.forEach((aDouble, algorithm) -> {
-//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
-//                results.put(solution.getProfit(), solution);
-//            });
-
             TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
 
             pureResults.forEach((aDouble, algorithm) -> {
 //                System.out.print("Current profit: ");
 //                System.out.println(aDouble);
 //                System.out.print("Improve solution: ");
-//                Algorithm solution = localSearch.improveSolution(algorithm);
-                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+                Algorithm solution = localSearch.improveSolution(algorithm);
                 results.put(solution.getProfit(), solution);
             });
+//            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
+//            pureResults.forEach((aDouble, algorithm) -> {
+//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+//            });
 
+
+//            pureResults.forEach((aDouble, algorithm) -> {
+//                System.out.print("Current profit: ");
+//                System.out.println(aDouble);
+//                System.out.print("Improve solution: ");
+//                Algorithm solution = localSearch.improveSolution(algorithm);
+//                Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
+//                results.put(solution.getProfit(), solution);
+//            });
 
             DrawPathHelper drawPathHelper = new DrawPathHelper();
             drawPathHelper.drawBestResults(points, results);
 
-
             //System.out.println(points.size());
-
-
         } catch (
                 IOException e)
 
