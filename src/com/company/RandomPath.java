@@ -2,12 +2,15 @@ package com.company;
 
 import java.util.*;
 
-public class RandomPath implements Algorithm
-{
+public class RandomPath implements Algorithm {
     private ArrayList<Point> path;
     private double profit;
     private Point startPoint;
     private ArrayList<Point> restList;
+
+    public RandomPath() {
+        path = new ArrayList<>();
+    }
 
     @Override
     public RandomPath clone() {
@@ -21,24 +24,24 @@ public class RandomPath implements Algorithm
 
     @Override
     public void execute(Point startPoint, Map<Integer, Point> allPoints) {
-        this.path = new ArrayList<>(allPoints.size());
-        TreeMap<Integer, Point> tempPoints = new TreeMap<>(allPoints);
-        restList = new ArrayList<>(100);
-
+        this.startPoint = startPoint;
         Random random = new Random();
-        while (tempPoints.size() > 1){
-            int index = random.nextInt(100);
-            Point point = tempPoints.get(index);
+        int setSize = random.nextInt(50) + 50;
 
-            if(point != null){
-                if(tempPoints.size() == 100){
-                    this.startPoint = point;
-                }
-                path.add(point);
-                tempPoints.remove(point.getIndex());
-            }
+        Set<Integer> indexes = new HashSet<>();
+
+        while (indexes.size() < setSize - 1) {
+            indexes.add(random.nextInt(99));
         }
-        path.add(tempPoints.firstEntry().getValue());
+
+        indexes.forEach(integer -> {
+            Point point = allPoints.get(integer);
+            if (point != null)
+                path.add(point);
+        });
+
+        this.restList = new ArrayList<>(allPoints.values());
+        restList.removeAll(path);
     }
 
     @Override
@@ -48,16 +51,14 @@ public class RandomPath implements Algorithm
 
     @Override
     public double getProfit() {
-
         double profit = 0.0;
-        for (int i = 0; i < this.path.size() - 1; i++){
+        for (int i = 0; i < this.path.size() - 1; i++) {
             Point firstPoint = path.get(i);
-            Point secoundPoint = path.get(i + 1);
+            Point secondPoint = path.get(i + 1);
 
-            double length = firstPoint.getDistance(secoundPoint);
-            profit += countProfit(secoundPoint.getProfit(), length);
+            double length = firstPoint.getDistance(secondPoint);
+            profit += countProfit(secondPoint.getProfit(), length);
         }
-
         return profit;
     }
 
@@ -83,7 +84,7 @@ public class RandomPath implements Algorithm
     }
 
     @Override
-    public void removePointFromCycle(int index){
+    public void removePointFromCycle(int index) {
         Point point = this.path.remove(index);
         this.restList.add(point);
     }
