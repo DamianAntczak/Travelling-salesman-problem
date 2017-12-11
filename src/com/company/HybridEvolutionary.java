@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class HybridEvolutionary {
     public static final int LAST_INDEX = 19;
@@ -38,9 +39,12 @@ public class HybridEvolutionary {
         }
 
         Algorithm recombination = recombination(population.get(firstIndex), population.get(secondIndex));
-        if (recombination.getProfit() > population.get(population.size() - 1).getProfit()) {
-            population.remove(LAST_INDEX);
-            population.add(LAST_INDEX, recombination);
+        Algorithm equal = population.stream().filter(algorithm -> algorithm.getProfit() == recombination.getProfit()).findFirst().orElse(null);
+        if (equal == null) {
+            if (recombination.getProfit() > population.get(population.size() - 1).getProfit()) {
+                population.remove(LAST_INDEX);
+                population.add(LAST_INDEX, recombination);
+            }
         }
 
         final Comparator<Algorithm> c = Comparator.comparingDouble(o -> o.getProfit());
@@ -55,18 +59,32 @@ public class HybridEvolutionary {
         ArrayList<Point> path1 = algorithm.getResultList();
         ArrayList<Point> path2 = algorithm1.getResultList();
 
+        for (int i = 0; i < path1.size() - 1; i++) {
+            Point currentPoint = path1.get(i);
+            int searchedIndex = IntStream.range(0, path2.size())
+                    .filter(index -> currentPoint.getIndex() == path2.get(index).getIndex())
+                    .findFirst().orElse(-1);
 
-        for (Point currentPoint : path1) {
-            Point newPoint = path2.stream().filter(point -> point.getIndex() == currentPoint.getIndex()).findFirst().orElse(null);
-            if (newPoint != null) {
-                resultList.add(newPoint); // TODO not only common
+            if (searchedIndex > -1) {
+                resultList.add(currentPoint);
             }
         }
+
+        ArrayList<Point> restList = new ArrayList<>(allPoints.values());
+        restList.removeAll(resultList);
+
+        Random random = new Random();
+        while (resultList.size() < 65) {
+            int bound = restList.size() - 1;
+            int randomInt = random.nextInt(bound);
+            Point point = restList.remove(randomInt);
+            resultList.add(point);
+        }
+
+
         System.out.println("resultList:" + resultList.size());
 
         newSolution.setCycle(resultList);
-        ArrayList<Point> restList = new ArrayList<>(allPoints.values());
-        restList.removeAll(resultList);
         newSolution.setRestList(restList);
         LocalSearch localSearch = new LocalSearch();
         newSolution = localSearch.improveSolution(newSolution);
