@@ -87,7 +87,7 @@ public class Main {
                         break;
                     case "H":
                     case "h":
-                        pureResults = hybridEvolutionary.improveSolution(getAllResults(points, "RandomPath"), points);
+                        pureResults = hybridEvolutionary.improveSolution(getAllResults(points, "RandomPath"), points, 60590);
                         break;
                 }
 

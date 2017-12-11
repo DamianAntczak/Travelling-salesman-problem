@@ -9,16 +9,17 @@ public class HybridEvolutionary {
 
     Map<Integer, Point> allPoints;
 
-    public TreeMap<Double, Algorithm> improveSolution(TreeMap<Double, Algorithm> resultsFromRandom, Map<Integer, Point> allPoints) {
+    public TreeMap<Double, Algorithm> improveSolution(TreeMap<Double, Algorithm> resultsFromRandom, Map<Integer, Point> allPoints, double avgTime) {
         this.allPoints = allPoints;
         population = new ArrayList<>(resultsFromRandom.values());
         population = population.subList(0, POPULATION_SIZE);
         System.out.println("Rozmiar" + population.size());
 
         TreeMap<Double, Algorithm> result = new TreeMap<>();
-        for (int i = 0; i < 200; i++) { // TODO change to time
+        final long startTime = System.currentTimeMillis();
+        do {
             recombinate();
-        }
+        } while ((System.currentTimeMillis() - startTime) <= avgTime);
 
         population.forEach(algorithm -> result.put(algorithm.getProfit(), algorithm));
         return result;
