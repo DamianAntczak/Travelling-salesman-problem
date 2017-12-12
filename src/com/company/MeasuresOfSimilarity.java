@@ -43,6 +43,11 @@ public class MeasuresOfSimilarity {
             }
         }
 
+        if(solution1.getResultList().get(solution1.getResultList().size()-1).getIndex() == solution2.getResultList().get(solution2.getResultList().size()-1).getIndex() &&
+                solution1.getResultList().get(0).getIndex() == solution2.getResultList().get(0).getIndex()) {
+            howManyCommon += 1;
+        }
+
         double avgEdgesCount = (solution1.getResultList().size() + solution2.getResultList().size()) / 2;
         return howManyCommon / avgEdgesCount;
     }
