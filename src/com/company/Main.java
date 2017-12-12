@@ -16,6 +16,7 @@ public class Main {
         LocalSearch localSearch = new LocalSearch();
         SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing();
         HybridEvolutionary hybridEvolutionary = new HybridEvolutionary();
+        MeasuresOfSimilarity measuresOfSimilarity = new MeasuresOfSimilarity();
 
         try {
             pointsReader.loadKorA100();
@@ -58,7 +59,7 @@ public class Main {
             System.out.println("N/n - NearestNeighbor");
             System.out.println("T/t - Regret");
             System.out.println("H/h - Hybrid");
-            System.out.println("X/x - Hybrid");
+            System.out.println("S/s - SimulatedAnnealing");
             str = s.nextLine();
             try {
                 switch (str) {
@@ -90,6 +91,10 @@ public class Main {
                     case "H":
                     case "h":
                         pureResults = hybridEvolutionary.improveSolution(getAllResults(points, "RandomPath"), points, 60590);
+                        break;
+                    case "M":
+                    case "m":
+                        measuresOfSimilarity.execute(points);
                         break;
                 }
 
@@ -127,9 +132,7 @@ public class Main {
             drawPathHelper.drawBestResults(points, results);
 
             //System.out.println(points.size());
-        } catch (
-                IOException e)
-
+        } catch (IOException e)
         {
             e.printStackTrace();
         }

@@ -33,8 +33,8 @@ public class RandomPath implements Algorithm {
         while (indexes.size() < setSize - 1) {
             indexes.add(random.nextInt(99));
         }
-        indexes.remove(startPoint.getIndex());
-        path.add(startPoint);
+//        indexes.remove(startPoint.getIndex());
+//        path.add(startPoint);
         indexes.forEach(integer -> {
             Point point = allPoints.get(integer);
             if (point != null)
