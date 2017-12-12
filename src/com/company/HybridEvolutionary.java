@@ -74,7 +74,7 @@ public class HybridEvolutionary {
         restList.removeAll(resultList);
 
         Random random = new Random();
-        while (resultList.size() < 65) {
+        while (resultList.size() < 70) {
             int bound = restList.size() - 1;
             int randomInt = random.nextInt(bound);
             Point point = restList.remove(randomInt);

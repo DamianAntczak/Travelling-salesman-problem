@@ -4,70 +4,51 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SimulatedAnnealing {
-    public SimulatedAnnealing(){
+
+    public static final double coolingRate = 0.0001;
+
+    public SimulatedAnnealing() {
     }
 
-    private ArrayList<Point> replacePoints(ArrayList<Point> resultList){
+    private ArrayList<Point> replacePoints(ArrayList<Point> resultList) {
         Random random = new Random();
-        double oldProfit = getProfit(resultList);
         ArrayList<Point> tempResult = new ArrayList<>(resultList);
 
-        int randomPointIndex = random.nextInt(resultList.size() - 1);
-        int nextRandomPointIndex = random.nextInt(resultList.size() - 1);
-        Point startPoint = resultList.get(randomPointIndex);
-        Point nextPoint = resultList.get(nextRandomPointIndex);
-        tempResult.remove(randomPointIndex);
-        tempResult.add(randomPointIndex, nextPoint);
-        tempResult.remove(nextRandomPointIndex);
-        tempResult.add(nextRandomPointIndex, startPoint);
+        int pos1  = (int)(resultList.size() * Math.random());
+        int pos2 = (int) (resultList.size() * Math.random());
+        Point startPoint = resultList.get(pos1);
+        Point nextPoint = resultList.get(pos2);
 
-        double profit = getProfit(tempResult);
+        tempResult.set(pos1, nextPoint);
+        tempResult.set(pos2, startPoint);
 
         return tempResult;
     }
 
-    private double getProfit(ArrayList<Point> tempResult) {
-//        double profit = 0.0;
-//        for (int i = 0; i < tempResult.size() - 1; i++){
-//            Point point = tempResult.get(i);
-//            Point point1 = tempResult.get(i + 1);
-//            double distance = point.getDistance(point1);
-//            profit += countCurrentProfit(point1.getProfit(), distance);
-//        }
-//        Point firstPoint = tempResult.get(0);
-//        Point lastPoint = tempResult.get(tempResult.size() - 1);
-//        double distance = lastPoint.getDistance(firstPoint);
-//        profit += countCurrentProfit(firstPoint.getProfit(), distance);
-//        return profit;
 
-        return calculateProfitForCycle(tempResult);
-    }
-
-    public Algorithm improveSolution(Algorithm solution){
+    public Algorithm improveSolution(Algorithm solution) {
         Algorithm newSolution = solution.clone();
         ArrayList<Point> currentPath = new ArrayList<>(newSolution.getResultList());
+        ArrayList<Point> best = new ArrayList<>();
 
         Random random = new Random();
-        double temperature = 2000.0;
+        double temperature = 100000;
         do {
-            int i = 0;
-            while (i < 100) {
-                ArrayList<Point> tempPath = replacePoints(currentPath);
-                double newProfit = getProfit(tempPath);
-                double oldProfit = getProfit(currentPath);
-                if (newProfit > oldProfit) {
-                    currentPath = tempPath;
-                } else {
-                    if (Math.exp((newProfit - oldProfit) / temperature) > random.nextDouble()) {
-                        currentPath = tempPath;
-                    }
-
+            ArrayList<Point> newPath = replacePoints(currentPath);
+            double newProfit = getProfit(newPath);
+            double oldProfit = getProfit(currentPath);
+            if (newProfit > oldProfit) {
+                currentPath = newPath;
+            } else {
+                if (Math.exp((newProfit - oldProfit) / temperature) > random.nextDouble()) {
+                    currentPath = newPath;
                 }
-                i++;
-            }
-            temperature -= 100.0;
 
-        }while (temperature >= 0.0);
+            }
+
+            temperature *= 1- coolingRate;
+
+        } while (temperature > 1);
 
         newSolution.setProfit(getProfit(currentPath));
         newSolution.setCycle(currentPath);
@@ -80,21 +61,23 @@ public class SimulatedAnnealing {
         return profit - wayLoss * LOSS_CONST;
     }
 
-    private double calculateProfitForCycle(ArrayList<Point> cycle) {
-        double profit = 0;
-        Point latestPoint = cycle.get(0);
-        for (int i = 1; i < cycle.size(); i++) {
-            profit += this.countCurrentProfit(latestPoint, cycle.get(i));
-            latestPoint = cycle.get(i);
-        }
 
+    public double getProfit(ArrayList<Point> cycle) {
+        double profit = 0.0;
+        for (int i = 0; i < cycle.size() - 1; i++) {
+            Point firstPoint = cycle.get(i);
+            Point secondPoint = cycle.get(i + 1);
+
+            double length = firstPoint.getDistance(secondPoint);
+            profit += countProfit(secondPoint.getProfit(), length);
+        }
         return profit;
     }
 
-    private double countCurrentProfit(Point pointOne, Point pointTwo) {
+    private double countProfit(Integer profit, double wayLoss) {
         Integer LOSS_CONST = 6;
-        double way = Math.sqrt((pointOne.getX() - pointTwo.getX()) * (pointOne.getX() - pointTwo.getX()) + (pointOne.getY() - pointTwo.getY()) * (pointOne.getY() - pointTwo.getY()));
 
-        return pointTwo.getProfit() - way * LOSS_CONST;
+        return profit - wayLoss * LOSS_CONST;
     }
+
 }

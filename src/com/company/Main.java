@@ -29,7 +29,7 @@ public class Main {
             System.out.println();
             System.out.println("Multiple Start Local Search? (y - yes / whatever - no)");
             String str = s.nextLine();
-            switch (str){
+            switch (str) {
                 case "Y":
                 case "y":
                     Algorithm algorithm = new RandomPath();
@@ -41,7 +41,7 @@ public class Main {
 //                    drawPathHelper.drawBestResults(points, bestResults);
 
                     TreeMap<Double, Algorithm> ILSarray = new TreeMap<>(Collections.reverseOrder());
-                    for(int i = 0; i<20; i++) {
+                    for (int i = 0; i < 20; i++) {
                         algorithm = localSearch.iteratedLocalSearch(algorithm, averageTime);
                         ILSarray.put(algorithm.getProfit(), algorithm);
                     }
@@ -58,6 +58,7 @@ public class Main {
             System.out.println("N/n - NearestNeighbor");
             System.out.println("T/t - Regret");
             System.out.println("H/h - Hybrid");
+            System.out.println("X/x - Hybrid");
             str = s.nextLine();
             try {
                 switch (str) {
@@ -79,11 +80,12 @@ public class Main {
                         break;
                     case "S":
                     case "s":
-                        pureResults = getAllResults(points, "RandomPath");
-                        pureResults.forEach((aDouble, algorithm) -> {
+                        TreeMap<Double, Algorithm> finalPureResults = new TreeMap<>();
+                        getAllResults(points, "RandomPath").forEach((aDouble, algorithm) -> {
                             Algorithm solution = simulatedAnnealing.improveSolution(algorithm);
-                            results.put(solution.getProfit(), solution);
+                            finalPureResults.put(solution.getProfit(), solution);
                         });
+                        pureResults = finalPureResults;
                         break;
                     case "H":
                     case "h":
@@ -156,7 +158,7 @@ public class Main {
         try {
             TreeMap<Double, Algorithm> pureResults = null;
             LocalSearch localSearch = new LocalSearch();
-            for(int i = 0; i < 20; i++) {
+            for (int i = 0; i < 20; i++) {
                 TreeMap<Double, Algorithm> results = new TreeMap<>(Collections.reverseOrder());
                 pureResults = getAllResults(points, "RandomPath");
                 final long startTime = System.currentTimeMillis();
