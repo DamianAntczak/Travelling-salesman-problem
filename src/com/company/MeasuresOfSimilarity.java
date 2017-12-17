@@ -35,20 +35,26 @@ public class MeasuresOfSimilarity {
         System.out.println(bestProfit);
 
         System.out.println();
-        List<Pair<Double, BigDecimal>> pairs = compareWithBestSolution(algorithms);
-        pairs.forEach(pair -> {
-            System.out.println(String.format("%f;%f", pair.getKey(),  pair.getValue().floatValue()));
-        });
+        List<Pair<Double, BigDecimal>> pairs = compareWithBestSolutionByVertex(algorithms);
+        List<Pair<Double, BigDecimal>> pairs2 = compareWithBestSolutionByEdges(algorithms);
+//        pairs.forEach(pair -> {
+//            System.out.println(String.format("%f;%f", pair.getKey(),  pair.getValue().floatValue()));
+//        });
 
-       try(PrintWriter pw = new PrintWriter(new FileWriter("results.txt"))){
-           pairs.forEach(pair -> {
-               String line = String.format("%f;%f", pair.getKey(), pair.getValue().floatValue());
-               System.out.println(line);
-               pw.println(line);
-           });
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
+        saveResultsToFile(pairs, "commonVertexs");
+        saveResultsToFile(pairs2, "commonEdges");
+    }
+
+    private void saveResultsToFile(List<Pair<Double, BigDecimal>> pairs, String fileName) {
+        try(PrintWriter pw = new PrintWriter(new FileWriter(fileName + ".csv"))){
+            pairs.forEach(pair -> {
+                String line = String.format("%f;%f", pair.getKey(), pair.getValue().floatValue());
+                System.out.println(line);
+                pw.println(line);
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Algorithm findBest(List<Algorithm> algorithms) {
@@ -57,7 +63,7 @@ public class MeasuresOfSimilarity {
         return collect.get(0);
     }
 
-    public double commonVertexs(Algorithm solution1, Algorithm solution2) {
+    public BigDecimal commonVertexs(Algorithm solution1, Algorithm solution2) {
         final int[] howManyCommon = {0};
         solution1.getResultList().forEach((point) -> {
             if (solution2.getResultList().indexOf(point) != -1) {
@@ -65,8 +71,9 @@ public class MeasuresOfSimilarity {
             }
         });
 
-        double avgVertexsCount = (solution1.getResultList().size() + solution2.getResultList().size()) / 2;
-        return howManyCommon[0] / avgVertexsCount;
+        BigDecimal numerator = BigDecimal.valueOf(solution1.getResultList().size() + solution2.getResultList().size());
+        BigDecimal avgVertexsCount = numerator.divide(BigDecimal.valueOf(2));
+        return BigDecimal.valueOf(howManyCommon[0]).divide(avgVertexsCount, 8, RoundingMode.HALF_UP);
     }
 
     private BigDecimal commonEdges(Algorithm solution1, Algorithm solution2) {
@@ -91,10 +98,19 @@ public class MeasuresOfSimilarity {
         return BigDecimal.valueOf(howManyCommon).divide(avgEdgesCount, 8, RoundingMode.HALF_UP);
     }
 
-    private List<Pair<Double, BigDecimal>> compareWithBestSolution(List<Algorithm> algorithms){
+    private List<Pair<Double, BigDecimal>> compareWithBestSolutionByEdges(List<Algorithm> algorithms){
         List<Pair<Double, BigDecimal>> results = new ArrayList<>(INITIAL_CAPACITY);
         algorithms.forEach(algorithm -> {
             BigDecimal value = commonEdges(algorithm, bestSolution);
+            results.add(new Pair<>(algorithm.getProfit(), value));
+        });
+        return results;
+    }
+
+    private List<Pair<Double, BigDecimal>> compareWithBestSolutionByVertex(List<Algorithm> algorithms){
+        List<Pair<Double, BigDecimal>> results = new ArrayList<>(INITIAL_CAPACITY);
+        algorithms.forEach(algorithm -> {
+            BigDecimal value = commonVertexs(algorithm, bestSolution);
             results.add(new Pair<>(algorithm.getProfit(), value));
         });
         return results;
